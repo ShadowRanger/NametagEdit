@@ -56,7 +56,7 @@ If you choose FlatFile support, all your edits will be accessible via the player
 
 If you choose MySQL support, all edits must be made via the API or in game commands. NametagEdit requires a database for MySQL support. Once initiated, NametagEdit
 will establish a connection automatically, and generate the necessary tables for you if they do not exist. If you use a mysql web editor, such as PhpMyAdmin, you
-can easily (and directly) modify NametagEdit data as if it were a flat file. Similarly, a the MySQL terminal can be used. 
+can easily (and directly) modify NametagEdit data as if it were a flat file. Similarly, a MySQL terminal can be used. 
 
 == Configuration
 When the plugin starts for the first time, it will generate 3 configurable files. They are: "config.yml", "groups.yml" and "players.yml".
