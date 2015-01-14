@@ -15,6 +15,10 @@ import ca.wacos.nametagedit.core.NametagManager;
  */
 public class NametagAPI {
 
+    private NametagAPI() {
+        // To restrict developers from accessing this class non-statically
+    }
+    
     /**
      * Sets the custom prefix for the given player </br></br> This method
      * schedules a task with the request to change the player's name to prevent

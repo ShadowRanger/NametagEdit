@@ -67,8 +67,7 @@ public class FileManager {
 
         try {
             inputStream = plugin.getResource(name);
-            outputStream = new FileOutputStream(new File(plugin.getDataFolder()
-                    + "/" + name));
+            outputStream = new FileOutputStream(new File(plugin.getDataFolder() + "/" + name));
 
             int read = 0;
             byte[] bytes = new byte[1024];

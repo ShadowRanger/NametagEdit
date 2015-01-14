@@ -12,7 +12,7 @@ import ca.wacos.nametagedit.NametagEdit;
 
 public class TableCreatorTask extends BukkitRunnable {
 
-    List<String> queries = new ArrayList<>();
+    private List<String> queries = new ArrayList<>();
     
     public TableCreatorTask() {
         queries.add("CREATE TABLE IF NOT EXISTS `players` (`uuid` varchar(64) NOT NULL, `name` varchar(16) NOT NULL, `prefix` varchar(16) NOT NULL, `suffix` varchar(16) NOT NULL, PRIMARY KEY (`uuid`));");

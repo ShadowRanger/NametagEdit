@@ -73,8 +73,7 @@ public class PacketHandler {
                 packetType = Class.forName("net.minecraft.server." + version + ".Packet209SetScoreboardTeam");
             } else {
                 packetType = Class.forName("net.minecraft.server." + version + ".PacketPlayOutScoreboardTeam");
-            }
-            
+            }        
         } catch (Exception e) {
             e.printStackTrace();
         }

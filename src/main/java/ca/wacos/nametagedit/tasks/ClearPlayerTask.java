@@ -25,7 +25,7 @@ public class ClearPlayerTask extends BukkitRunnable {
         try {
             uuid = UUIDFetcher.getUUIDOf(player).toString();
         } catch (Exception e) {
-            // Ignore
+            plugin.getLogger().severe("Failed to retrieve UUID for " + player);
         }
 
         new BukkitRunnable() {

@@ -1,6 +1,14 @@
 = Changelogs
 
-== v3.0-beta
+== v3.0-SNAPSHOT
+*Remove unnecessary final modifiers
+*Cleanup formatting a bit
+*Simplify methods in the handler
+*Fix bug where chat listener was not unregistered/registered when toggled on/off
+*Removed redundant checks
+*Fixed issue with tab list not being cleared when enabled
+
+== v3.0-BETa
 
 @sgtcaze
 === Fixes

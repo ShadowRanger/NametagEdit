@@ -1,12 +1,11 @@
 package ca.wacos.nametagedit.tasks;
 
-import java.util.Arrays;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import ca.wacos.nametagedit.Messages;
 import ca.wacos.nametagedit.NametagEdit;
+import ca.wacos.nametagedit.data.PlayerData;
 import ca.wacos.nametagedit.utils.UUIDFetcher;
 
 public class ModifyTagTask extends BukkitRunnable {
@@ -31,7 +30,7 @@ public class ModifyTagTask extends BukkitRunnable {
         try {
             uuid = UUIDFetcher.getUUIDOf(player).toString();
         } catch (Exception e) {
-            // Ignore
+            plugin.getLogger().severe("Failed to retrieve UUID for " + player);
         }
 
         new BukkitRunnable() {
@@ -41,10 +40,18 @@ public class ModifyTagTask extends BukkitRunnable {
                     Messages.UUID_LOOKUP_FAILED.send(sender, player);
                 } else {
                     if (!plugin.getNTEHandler().getPlayerData().containsKey(uuid)) {
-                        plugin.getNTEHandler().getPlayerData().put(uuid, Arrays.asList(player, "", ""));
+                        plugin.getNTEHandler().getPlayerData().put(uuid, new PlayerData(player, uuid, "", ""));
+                    } else {
+                        PlayerData data = plugin.getNTEHandler().getPlayerData().get(uuid);
+                        switch(id) {
+                        case 1:
+                            data.setPrefix(value);
+                            break;
+                        case 2:
+                            data.setSuffix(value);
+                            break;
+                        }
                     }
-                    
-                    plugin.getNTEHandler().getPlayerData().get(uuid).set(id, value);
                 }
             }
         }.runTask(plugin);
