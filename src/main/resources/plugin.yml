@@ -1,6 +1,6 @@
 name: NametagEdit
 main: ca.wacos.nametagedit.NametagEdit
-version: 3.0
+version: 3.0-SNAPSHOT
 description: NametagEdit
 authors: [wacossusca34, sgtcaze, sanjay900]
 commands:
