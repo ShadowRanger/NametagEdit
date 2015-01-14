@@ -58,7 +58,7 @@
       </repository>
       <repository>
 	 <id>upstream</id>
-	 <url>http://ci.playmc.cc/plugin/repository/everything</url>
+	 <url>http://ci.playmc.cc/plugin/repository/everything/</url>
       </repository>
    </repositories>
    <!-- Builds NametagEdit -->
