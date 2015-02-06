@@ -21,34 +21,34 @@ public enum Messages {
     USAGE_EDIT("Alter a prefix or suffix for a player \n&3NTE &4» &r/ne <prefix/suffix> [player] value"),
     USAGE_GROUP("/ne groups list §clist all groups \n&3NTE &4» &r/ne groups <remove/add> [group] &cAdd or remove a group \n&3NTE &4» &r/ne groups set [group] <perm/prefix/suffix> value &cModifies a group value"),
     USAGE_RELOAD("Refresh all files \n&3NTE &4» &r\"file\" set tag data from the files \n&3NTE &4» &r\"memory\" set tag data from the cache");
-	
-	private String text;
-	
-	private Messages(String text){
-		this.text = text;
-	}
-	
-	@Override
-	public String toString(){
-		return ChatColor.translateAlternateColorCodes('&', "&3NTE &4» &r" + text);
-	}
-	
-	public String toStringObj(Object... object) {
-	    return String.format(toString(), object);
-	}
-	
-	public String toString(String toReplace) {
-	    return toString().replace("%s", toReplace);
-	}
-	
-	public void send(CommandSender sender) {
-	    sender.sendMessage(toString());
-	}
-	
-	public void send(CommandSender sender, String replacement) {
-	    sender.sendMessage(toString().replace("%s", replacement));
+
+    private final String text;
+
+    private Messages(String text) {
+        this.text = text;
     }
-    
+
+    @Override
+    public String toString() {
+        return ChatColor.translateAlternateColorCodes('&', "&3NTE &4» &r" + text);
+    }
+
+    public String toStringObj(Object... object) {
+        return String.format(toString(), object);
+    }
+
+    public String toString(String toReplace) {
+        return toString().replace("%s", toReplace);
+    }
+
+    public void send(CommandSender sender) {
+        sender.sendMessage(toString());
+    }
+
+    public void send(CommandSender sender, String replacement) {
+        sender.sendMessage(toString().replace("%s", replacement));
+    }
+
     public void sendMulti(CommandSender sender, Object... object) {
         sender.sendMessage(String.format(toString(), object));
     }

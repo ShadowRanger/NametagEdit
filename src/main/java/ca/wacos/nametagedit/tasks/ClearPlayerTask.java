@@ -1,25 +1,25 @@
 package ca.wacos.nametagedit.tasks;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.scheduler.BukkitRunnable;
-
 import ca.wacos.nametagedit.Messages;
 import ca.wacos.nametagedit.NametagEdit;
 import ca.wacos.nametagedit.utils.UUIDFetcher;
+import org.bukkit.command.CommandSender;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class ClearPlayerTask extends BukkitRunnable {
 
-    private String player, uuid;
-    
-    private CommandSender sender;
-    
-    private NametagEdit plugin = NametagEdit.getInstance();
-    
+    private final String player;
+    private String uuid;
+
+    private final CommandSender sender;
+
+    private final NametagEdit plugin = NametagEdit.getInstance();
+
     public ClearPlayerTask(CommandSender sender, String player) {
         this.sender = sender;
         this.player = player;
     }
-    
+
     @Override
     public void run() {
         try {
@@ -31,16 +31,16 @@ public class ClearPlayerTask extends BukkitRunnable {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if(uuid == null && sender != null) {
+                if (uuid == null && sender != null) {
                     Messages.UUID_LOOKUP_FAILED.send(sender);
                 } else {
-                    if(sender != null) {
+                    if (sender != null) {
                         // Send info that
                     }
-                    
+
                     plugin.getNTEHandler().getPlayerData().remove(uuid);
                 }
             }
-        }.runTask(plugin);        
+        }.runTask(plugin);
     }
 }

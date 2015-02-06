@@ -1,16 +1,14 @@
 package ca.wacos.nametagedit.tasks;
 
+import ca.wacos.nametagedit.NametagEdit;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
 import org.bukkit.scheduler.BukkitRunnable;
 
-import ca.wacos.nametagedit.NametagEdit;
-
 public class UpdateGroupTask extends BukkitRunnable {
-    
-    private String table, group, field, oper;
+
+    private final String table, group, field, oper;
 
     public UpdateGroupTask(String table, String group, String field, String oper) {
         this.table = table;
@@ -18,7 +16,7 @@ public class UpdateGroupTask extends BukkitRunnable {
         this.field = field;
         this.oper = oper;
     }
-    
+
     @Override
     public void run() {
         Connection connection = null;
