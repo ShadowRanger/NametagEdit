@@ -1,24 +1,22 @@
 package ca.wacos.nametagedit.tasks;
 
+import ca.wacos.nametagedit.NametagEdit;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
 import org.bukkit.scheduler.BukkitRunnable;
-
-import ca.wacos.nametagedit.NametagEdit;
 
 public class UpdatePlayerTask extends BukkitRunnable {
 
-    private String uuid, name, prefix, suffix;
-    
+    private final String uuid, name, prefix, suffix;
+
     public UpdatePlayerTask(String uuid, String name, String prefix, String suffix) {
         this.uuid = uuid;
         this.name = name;
         this.prefix = prefix;
         this.suffix = suffix;
     }
-    
+
     @Override
     public void run() {
         Connection connection = null;

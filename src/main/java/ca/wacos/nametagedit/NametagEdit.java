@@ -1,7 +1,14 @@
 package ca.wacos.nametagedit;
 
+import ca.wacos.nametagedit.core.NametagHandler;
+import ca.wacos.nametagedit.core.NametagManager;
+import ca.wacos.nametagedit.events.AsyncPlayerChat;
+import ca.wacos.nametagedit.events.PlayerJoin;
+import ca.wacos.nametagedit.tasks.SQLDataTask;
+import ca.wacos.nametagedit.tasks.TableCreatorTask;
+import ca.wacos.nametagedit.utils.FileManager;
+import com.zaxxer.hikari.HikariDataSource;
 import java.io.IOException;
-
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.HandlerList;
@@ -10,28 +17,18 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
 
-import ca.wacos.nametagedit.core.NametagHandler;
-import ca.wacos.nametagedit.core.NametagManager;
-import ca.wacos.nametagedit.events.AsyncPlayerChat;
-import ca.wacos.nametagedit.events.PlayerJoin;
-import ca.wacos.nametagedit.tasks.SQLDataTask;
-import ca.wacos.nametagedit.tasks.TableCreatorTask;
-import ca.wacos.nametagedit.utils.FileManager;
-
-import com.zaxxer.hikari.HikariDataSource;
-
 /**
  * This is the main class for the NametagEdit plugin.
- * 
+ *
  * @author sgtcaze
- * 
+ *
  */
 public class NametagEdit extends JavaPlugin {
 
     private static NametagEdit instance;
 
     private Listener chatListener;
-    
+
     private FileManager fileUtils;
     private NametagHandler nteHandler;
     private NametagManager nametagManager;
@@ -41,22 +38,22 @@ public class NametagEdit extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        
+
         fileUtils = new FileManager();
         nteHandler = new NametagHandler();
         nametagManager = new NametagManager();
-                
+
         getCommand("ne").setExecutor(new NametagCommand());
 
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new PlayerJoin(), this);
 
         FileConfiguration config = getConfig();
-        
+
         if (config.getBoolean("Chat.Enabled")) {
             registerChatListener();
         }
-        
+
         if (config.getBoolean("MetricsEnabled")) {
             try {
                 Metrics metrics = new Metrics(this);
@@ -108,24 +105,24 @@ public class NametagEdit extends JavaPlugin {
     public FileManager getFileUtils() {
         return fileUtils;
     }
-    
+
     public HikariDataSource getConnectionPool() {
         return connectionPool;
     }
-    
+
     public Listener getChatListener() {
         return chatListener;
     }
-    
+
     public void registerChatListener() {
         chatListener = new AsyncPlayerChat();
         Bukkit.getPluginManager().registerEvents(chatListener, this);
     }
-    
+
     public void unregisterChatListener() {
         HandlerList.unregisterAll(chatListener);
     }
-    
+
     private void setupHikari() {
         FileConfiguration config = getConfig();
 
@@ -141,6 +138,6 @@ public class NametagEdit extends JavaPlugin {
         connectionPool.addDataSourceProperty("port", "3306");
         connectionPool.addDataSourceProperty("databaseName", name);
         connectionPool.addDataSourceProperty("user", username);
-        connectionPool.addDataSourceProperty("password", password);   
+        connectionPool.addDataSourceProperty("password", password);
     }
 }

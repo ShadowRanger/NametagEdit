@@ -1,17 +1,13 @@
 package ca.wacos.nametagedit.core;
 
+import ca.wacos.nametagedit.NametagEdit;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.bukkit.entity.Player;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Field;
-
 import org.bukkit.Bukkit;
-
-import ca.wacos.nametagedit.NametagEdit;
+import org.bukkit.entity.Player;
 
 /**
  * A small wrapper for the PacketPlayOutScoreboardTeam packet.
@@ -21,7 +17,7 @@ public class PacketHandler {
     private Object packet;
 
     private static Class<?> packetType;
-    
+
     private static Method getHandle;
     private static Method sendPacket;
     private static Field playerConnection;
@@ -40,40 +36,40 @@ public class PacketHandler {
             version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
 
             Class<?> typeNMSPlayer = Class.forName("net.minecraft.server." + version + ".EntityPlayer");
-            Class<?> typeCraftPlayer = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer");       
+            Class<?> typeCraftPlayer = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer");
             Class<?> typePlayerConnection = Class.forName("net.minecraft.server." + version + ".PlayerConnection");
 
             getHandle = typeCraftPlayer.getMethod("getHandle");
             playerConnection = typeNMSPlayer.getField("playerConnection");
             sendPacket = typePlayerConnection.getMethod("sendPacket", Class.forName("net.minecraft.server." + version + ".Packet"));
-                            
-            if(version.startsWith("v1_8")) {
+
+            if (version.startsWith("v1_8")) {
                 fieldPrefix = "c";
                 fieldSuffix = "d";
                 fieldPlayers = "g";
                 fieldTeamName = "a";
-                fieldParamInt = "h"; 
+                fieldParamInt = "h";
                 fieldPackOption = "i";
                 fieldDisplayName = "b";
-                
+
                 NametagEdit.getInstance().getLogger().info("Loading with 1.8 support");
             } else {
                 fieldPrefix = "c";
                 fieldSuffix = "d";
                 fieldPlayers = "e";
                 fieldTeamName = "a";
-                fieldParamInt = "f";                
+                fieldParamInt = "f";
                 fieldPackOption = "g";
                 fieldDisplayName = "b";
-                
+
                 NametagEdit.getInstance().getLogger().info("Loading with 1.5-1.7 support");
             }
-            
-            if(version.startsWith("v1_5")) {
+
+            if (version.startsWith("v1_5")) {
                 packetType = Class.forName("net.minecraft.server." + version + ".Packet209SetScoreboardTeam");
             } else {
                 packetType = Class.forName("net.minecraft.server." + version + ".PacketPlayOutScoreboardTeam");
-            }        
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -92,13 +88,13 @@ public class PacketHandler {
             setField(fieldSuffix, suffix);
             setField(fieldPackOption, 1);
         }
-        
+
         if (paramInteger == 0) {
             addAll(players);
         }
     }
 
-    public PacketHandler(String name, Collection<?> players, int paramInt) throws ClassNotFoundException, IllegalAccessException, InstantiationException, 
+    public PacketHandler(String name, Collection<?> players, int paramInt) throws ClassNotFoundException, IllegalAccessException, InstantiationException,
             NoSuchMethodException, NoSuchFieldException, InvocationTargetException {
         packet = packetType.newInstance();
 
@@ -106,7 +102,7 @@ public class PacketHandler {
             throw new IllegalArgumentException(
                     "Method must be join or leave for player constructor");
         }
-        
+
         if (players == null || players.isEmpty()) {
             players = new ArrayList<String>();
         }
@@ -116,8 +112,8 @@ public class PacketHandler {
         addAll(players);
     }
 
-    public void sendToPlayer(Player bukkitPlayer) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, 
-                 NoSuchMethodException, NoSuchFieldException {
+    public void sendToPlayer(Player bukkitPlayer) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException,
+            NoSuchMethodException, NoSuchFieldException {
         Object player = getHandle.invoke(bukkitPlayer);
 
         Object connection = playerConnection.get(player);
@@ -134,7 +130,7 @@ public class PacketHandler {
     @SuppressWarnings("all")
     private void addAll(Collection<?> col) throws NoSuchFieldException, IllegalAccessException {
         Field f = packet.getClass().getDeclaredField(fieldPlayers);
-        f.setAccessible(true);        
+        f.setAccessible(true);
         ((Collection) f.get(packet)).addAll(col);
     }
 }

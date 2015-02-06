@@ -1,26 +1,24 @@
 package ca.wacos.nametagedit.tasks;
 
+import ca.wacos.nametagedit.NametagEdit;
+import ca.wacos.nametagedit.data.GroupData;
+import ca.wacos.nametagedit.data.PlayerData;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import ca.wacos.nametagedit.NametagEdit;
-import ca.wacos.nametagedit.data.GroupData;
-import ca.wacos.nametagedit.data.PlayerData;
 
 /**
  * This class is responsible for grabbing all data from the database and caching
  * it
- * 
+ *
  * @author sgtcaze
  */
 public class SQLDataTask extends BukkitRunnable {
 
-    private NametagEdit plugin = NametagEdit.getInstance();
+    private final NametagEdit plugin = NametagEdit.getInstance();
 
     @Override
     public void run() {
@@ -38,7 +36,7 @@ public class SQLDataTask extends BukkitRunnable {
             ResultSet results = connection.prepareStatement(groupQuery).executeQuery();
 
             GroupData groupData;
-            
+
             while (results.next()) {
                 groupData = new GroupData(results.getString("name"), results.getString("prefix"), results.getString("suffix"), results.getString("permission"));
                 groupDataTemp.put(results.getString("name"), groupData);
@@ -47,7 +45,7 @@ public class SQLDataTask extends BukkitRunnable {
             results = connection.prepareStatement(playerQuery).executeQuery();
 
             PlayerData playerData;
-            
+
             while (results.next()) {
                 playerData = new PlayerData(results.getString("name"), results.getString("uuid"), colorize(results.getString("prefix")), colorize(results.getString("suffix")));
                 playerDataTemp.put(results.getString("name"), playerData);
@@ -85,7 +83,7 @@ public class SQLDataTask extends BukkitRunnable {
             }.runTask(plugin);
         }
     }
-    
+
     private String colorize(String input) {
         return ChatColor.translateAlternateColorCodes('&', input);
     }

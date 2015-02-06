@@ -1,16 +1,15 @@
 package ca.wacos.nametagedit;
 
-import org.bukkit.Bukkit;
-
 import ca.wacos.nametagedit.NametagChangeEvent.NametagChangeReason;
 import ca.wacos.nametagedit.NametagChangeEvent.NametagChangeType;
 import ca.wacos.nametagedit.core.NametagManager;
+import org.bukkit.Bukkit;
 
 /**
  * This API class is used to set prefixes and suffixes at a high level, much
  * alike what the in-game /ne commands do. These methods fire events, which can
  * be listened to, and cancelled.
- * 
+ *
  * It is recommended to use this class for light use of NametagEdit.
  */
 public class NametagAPI {
@@ -18,19 +17,17 @@ public class NametagAPI {
     private NametagAPI() {
         // To restrict developers from accessing this class non-statically
     }
-    
+
     /**
      * Sets the custom prefix for the given player </br></br> This method
      * schedules a task with the request to change the player's name to prevent
      * it from clashing with the PlayerJoinEvent in NametagEdit.
-     * 
-     * @param player
-     *            the player to set the prefix for
-     * @param prefix
-     *            the prefix to use
+     *
+     * @param player the player to set the prefix for
+     * @param prefix the prefix to use
      */
     public static void setPrefix(final String player, final String prefix) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(NametagEdit.getInstance(), new Runnable(){
+        Bukkit.getScheduler().scheduleSyncDelayedTask(NametagEdit.getInstance(), new Runnable() {
             @Override
             public void run() {
                 NametagChangeEvent e = new NametagChangeEvent(player, getPrefix(player), getSuffix(player), trim(prefix), "", NametagChangeType.SOFT, NametagChangeReason.CUSTOM);
@@ -46,21 +43,19 @@ public class NametagAPI {
      * Sets the custom suffix for the given player </br></br> This method
      * schedules a task with the request to change the player's name to prevent
      * it from clashing with the PlayerJoinEvent in NametagEdit.
-     * 
-     * @param player
-     *            the player to set the suffix for
-     * @param suffix
-     *            the suffix to use
+     *
+     * @param player the player to set the suffix for
+     * @param suffix the suffix to use
      */
     public static void setSuffix(final String player, final String suffix) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(NametagEdit.getInstance(), new Runnable(){
+        Bukkit.getScheduler().scheduleSyncDelayedTask(NametagEdit.getInstance(), new Runnable() {
             @Override
             public void run() {
                 NametagChangeEvent e = new NametagChangeEvent(player, getPrefix(player), getSuffix(player), "", trim(suffix), NametagChangeType.SOFT, NametagChangeReason.CUSTOM);
                 Bukkit.getServer().getPluginManager().callEvent(e);
                 if (!e.isCancelled()) {
                     NametagManager.update(player, "", trim(suffix));
-                }   
+                }
             }
         });
     }
@@ -71,16 +66,13 @@ public class NametagAPI {
      * will be removed from the player. </br></br> This method schedules a task
      * with the request to change the player's name to prevent it from clashing
      * with the PlayerJoinEvent in NametagEdit.
-     * 
-     * @param player
-     *            the player to set the prefix and suffix for
-     * @param prefix
-     *            the prefix to use
-     * @param suffix
-     *            the suffix to use
+     *
+     * @param player the player to set the prefix and suffix for
+     * @param prefix the prefix to use
+     * @param suffix the suffix to use
      */
     public static void setNametagHard(final String player, final String prefix, final String suffix) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(NametagEdit.getInstance(), new Runnable(){
+        Bukkit.getScheduler().scheduleSyncDelayedTask(NametagEdit.getInstance(), new Runnable() {
             @Override
             public void run() {
                 NametagChangeEvent e = new NametagChangeEvent(player, getPrefix(player), getSuffix(player), trim(prefix), trim(suffix), NametagChangeType.HARD, NametagChangeReason.CUSTOM);
@@ -97,16 +89,13 @@ public class NametagAPI {
      * or suffix is empty/null, it will be ignored. </br></br> This method
      * schedules a task with the request to change the player's name to prevent
      * it from clashing with the PlayerJoinEvent in NametagEdit.
-     * 
-     * @param player
-     *            the player to set the prefix and suffix for
-     * @param prefix
-     *            the prefix to use
-     * @param suffix
-     *            the suffix to use
+     *
+     * @param player the player to set the prefix and suffix for
+     * @param prefix the prefix to use
+     * @param suffix the suffix to use
      */
-    public static void setNametagSoft(final String player, final String prefix,  final String suffix) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(NametagEdit.getInstance(), new Runnable(){
+    public static void setNametagSoft(final String player, final String prefix, final String suffix) {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(NametagEdit.getInstance(), new Runnable() {
             @Override
             public void run() {
                 NametagChangeEvent e = new NametagChangeEvent(player, getPrefix(player), getSuffix(player), trim(prefix), trim(suffix), NametagChangeType.SOFT, NametagChangeReason.CUSTOM);
@@ -123,22 +112,19 @@ public class NametagAPI {
      * existing prefix or suffix. If a given prefix or suffix is null/empty, it
      * will be removed from the player.<br>
      * <br>
-     * 
+     *
      * This method does not save the modified nametag, it only updates it about
      * their head. use setNametagSoft and setNametagHard if you don't know what
      * you're doing. </br></br> This method schedules a task with the request to
      * change the player's name to prevent it from clashing with the
      * PlayerJoinEvent in NametagEdit.
-     * 
-     * @param player
-     *            the player to set the prefix and suffix for
-     * @param prefix
-     *            the prefix to use
-     * @param suffix
-     *            the suffix to use
+     *
+     * @param player the player to set the prefix and suffix for
+     * @param prefix the prefix to use
+     * @param suffix the suffix to use
      */
     public static void updateNametagHard(final String player, final String prefix, final String suffix) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(NametagEdit.getInstance(), new Runnable(){
+        Bukkit.getScheduler().scheduleSyncDelayedTask(NametagEdit.getInstance(), new Runnable() {
             @Override
             public void run() {
                 NametagChangeEvent e = new NametagChangeEvent(player, getPrefix(player), getSuffix(player), trim(prefix), trim(suffix), NametagChangeType.HARD, NametagChangeReason.CUSTOM);
@@ -154,22 +140,19 @@ public class NametagAPI {
      * Sets the custom given prefix and suffix to the player. If a given prefix
      * or suffix is empty/null, it will be ignored.<br>
      * <br>
-     * 
+     *
      * This method does not save the modified nametag, it only updates it about
      * their head. use setNametagSoft and setNametagHard if you don't know what
      * you're doing. </br></br> This method schedules a task with the request to
      * change the player's name to prevent it from clashing with the
      * PlayerJoinEvent in NametagEdit.
-     * 
-     * @param player
-     *            the player to set the prefix and suffix for
-     * @param prefix
-     *            the prefix to use
-     * @param suffix
-     *            the suffix to use
+     *
+     * @param player the player to set the prefix and suffix for
+     * @param prefix the prefix to use
+     * @param suffix the suffix to use
      */
     public static void updateNametagSoft(final String player, final String prefix, final String suffix) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(NametagEdit.getInstance(), new Runnable(){
+        Bukkit.getScheduler().scheduleSyncDelayedTask(NametagEdit.getInstance(), new Runnable() {
             @Override
             public void run() {
                 NametagChangeEvent e = new NametagChangeEvent(player, getPrefix(player), getSuffix(player), trim(prefix), trim(suffix), NametagChangeType.SOFT, NametagChangeReason.CUSTOM);
@@ -183,9 +166,8 @@ public class NametagAPI {
 
     /**
      * Returns the prefix for the given player name
-     * 
-     * @param player
-     *            the player to check
+     *
+     * @param player the player to check
      * @return the player's prefix, or null if there is none.
      */
     public static String getPrefix(String player) {
@@ -194,9 +176,8 @@ public class NametagAPI {
 
     /**
      * Returns the suffix for the given player name
-     * 
-     * @param player
-     *            the player to check
+     *
+     * @param player the player to check
      * @return the player's suffix, or null if there is none.
      */
     public static String getSuffix(String player) {
@@ -205,9 +186,8 @@ public class NametagAPI {
 
     /**
      * Returns the entire nametag for the given player
-     * 
-     * @param player
-     *            the player to check
+     *
+     * @param player the player to check
      * @return the player's prefix, actual name, and suffix in one string
      */
     public static String getNametag(String player) {
@@ -216,9 +196,8 @@ public class NametagAPI {
 
     /**
      * Function trims a string
-     * 
-     * @param input
-     *            string to trim
+     *
+     * @param input string to trim
      * @return a <= 16 character string
      */
     public static String trim(String input) {

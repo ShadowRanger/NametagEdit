@@ -1,23 +1,21 @@
 package ca.wacos.nametagedit.tasks;
 
+import ca.wacos.nametagedit.NametagEdit;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
 import org.bukkit.scheduler.BukkitRunnable;
-
-import ca.wacos.nametagedit.NametagEdit;
 
 public class DeleteTypeTask extends BukkitRunnable {
 
-    private String table, type, val;
-    
+    private final String table, type, val;
+
     public DeleteTypeTask(String table, String type, String val) {
         this.table = table;
         this.type = type;
         this.val = val;
     }
-    
+
     @Override
     public void run() {
         Connection connection = null;

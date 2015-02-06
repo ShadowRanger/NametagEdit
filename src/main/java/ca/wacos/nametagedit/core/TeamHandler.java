@@ -2,7 +2,7 @@ package ca.wacos.nametagedit.core;
 
 public class TeamHandler {
 
-    private String name;
+    private final String name;
     private String prefix;
     private String suffix;
 

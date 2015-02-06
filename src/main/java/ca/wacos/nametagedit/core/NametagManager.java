@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -16,9 +15,9 @@ import org.bukkit.entity.Player;
  * prefixes/suffixes (it ignores teams with other characters) to assign unique
  * prefixes and suffixes to specific players in the game. This class makes edits
  * to the <b>scoreboard.dat</b> file, adding and removing teams on the fly.
- * 
+ *
  * @author Levi Webb
- * 
+ *
  */
 @SuppressWarnings("all")
 public class NametagManager {
@@ -26,9 +25,9 @@ public class NametagManager {
     // Prefix to append to all team names (nothing to do with prefix/suffix)
     private static final String TEAM_NAME_PREFIX = "NTE";
 
-    private static List<Integer> list = new ArrayList<Integer>();
+    private static final List<Integer> list = new ArrayList<Integer>();
 
-    private static HashMap<TeamHandler, List<String>> teams = new HashMap<TeamHandler, List<String>>();
+    private static final HashMap<TeamHandler, List<String>> teams = new HashMap<TeamHandler, List<String>>();
 
     private static void addToTeam(TeamHandler team, String player) {
         removeFromTeam(player);
@@ -140,16 +139,13 @@ public class NametagManager {
      * Updates a player's prefix and suffix in the scoreboard and above their
      * head.<br>
      * <br>
-     * 
+     *
      * If either the prefix or suffix is null or empty, it will be replaced with
      * the current prefix/suffix
-     * 
-     * @param player
-     *            the specified player
-     * @param prefix
-     *            the prefix to set for the given player
-     * @param suffix
-     *            the suffix to set for the given player
+     *
+     * @param player the specified player
+     * @param prefix the prefix to set for the given player
+     * @param suffix the suffix to set for the given player
      */
     public static void update(String player, String prefix, String suffix) {
         if (prefix == null || prefix.isEmpty()) {
@@ -171,16 +167,13 @@ public class NametagManager {
      * Updates a player's prefix and suffix in the scoreboard and above their
      * head.<br>
      * <br>
-     * 
+     *
      * If either the prefix or suffix is null or empty, it will be removed from
      * the player's nametag.
-     * 
-     * @param player
-     *            the specified player
-     * @param prefix
-     *            the prefix to set for the given player
-     * @param suffix
-     *            the suffix to set for the given player
+     *
+     * @param player the specified player
+     * @param prefix the prefix to set for the given player
+     * @param suffix the suffix to set for the given player
      */
     public static void overlap(String player, String prefix, String suffix) {
         if (prefix == null) {
@@ -198,9 +191,8 @@ public class NametagManager {
 
     /**
      * Clears a player's nametag.
-     * 
-     * @param player
-     *            the specified player
+     *
+     * @param player the specified player
      */
     public static void clear(String player) {
         removeFromTeam(player);
@@ -208,9 +200,8 @@ public class NametagManager {
 
     /**
      * Retrieves a player's prefix
-     * 
-     * @param player
-     *            the specified player
+     *
+     * @param player the specified player
      * @return the player's prefix
      */
     public static String getPrefix(String player) {
@@ -226,9 +217,8 @@ public class NametagManager {
 
     /**
      * Retrieves a player's suffix
-     * 
-     * @param player
-     *            the specified player
+     *
+     * @param player the specified player
      * @return the player's suffix
      */
     public static String getSuffix(String player) {
@@ -244,9 +234,8 @@ public class NametagManager {
 
     /**
      * Retrieves the player's entire name with both the prefix and suffix.
-     * 
-     * @param player
-     *            the specified player
+     *
+     * @param player the specified player
      * @return the entire nametag
      */
     public static String getFormattedName(String player) {
@@ -255,13 +244,10 @@ public class NametagManager {
 
     /**
      * Declares a new team in the scoreboard.dat of the given main world.
-     * 
-     * @param name
-     *            the team name
-     * @param prefix
-     *            the team's prefix
-     * @param suffix
-     *            the team's suffix
+     *
+     * @param name the team name
+     * @param prefix the team's prefix
+     * @param suffix the team's suffix
      * @return the created team
      */
     private static TeamHandler declareTeam(String name, String prefix, String suffix) {
@@ -284,11 +270,9 @@ public class NametagManager {
      * Gets the {@link net.minecraft.server.v1_5_R3.ScoreboardTeam} for the
      * given prefix and suffix, and if none matches, creates a new team with the
      * provided info. This also removes teams that currently have no players.
-     * 
-     * @param prefix
-     *            the team's prefix
-     * @param suffix
-     *            the team's suffix
+     *
+     * @param prefix the team's prefix
+     * @param suffix the team's suffix
      * @return a team with the corresponding prefix/suffix
      */
     private static TeamHandler get(String prefix, String suffix) {
@@ -310,7 +294,7 @@ public class NametagManager {
 
     /**
      * Returns the next available team name that is not taken.
-     * 
+     *
      * @return an integer that for a team name that is not taken.
      */
     private static int nextName() {
@@ -352,9 +336,8 @@ public class NametagManager {
     /**
      * Sends the current team setup and their players to the given player. This
      * should be called when players join the server.
-     * 
-     * @param p
-     *            The player to send the packets to.
+     *
+     * @param p The player to send the packets to.
      */
     public static void sendTeamsToPlayer(Player p) {
         try {
@@ -374,9 +357,8 @@ public class NametagManager {
 
     /**
      * Sends packets out to players to add the given team
-     * 
-     * @param team
-     *            the team to add
+     *
+     * @param team the team to add
      */
     private static void sendPacketsAddTeam(TeamHandler team) {
         try {
@@ -395,9 +377,8 @@ public class NametagManager {
 
     /**
      * Sends packets out to players to remove the given team
-     * 
-     * @param team
-     *            the team to remove
+     *
+     * @param team the team to remove
      */
     private static void sendPacketsRemoveTeam(TeamHandler team) {
         boolean cont = false;
@@ -426,11 +407,9 @@ public class NametagManager {
 
     /**
      * Sends out packets to players to add the given player to the given team
-     * 
-     * @param team
-     *            the team to use
-     * @param player
-     *            the player to add
+     *
+     * @param team the team to use
+     * @param player the player to add
      */
     private static void sendPacketsAddToTeam(TeamHandler team, String player) {
         boolean cont = false;
@@ -459,11 +438,9 @@ public class NametagManager {
     /**
      * Sends out packets to players to remove the given player from the given
      * team.
-     * 
-     * @param team
-     *            the team to remove from
-     * @param player
-     *            the player to remove
+     *
+     * @param team the team to remove from
+     * @param player the player to remove
      */
     private static void sendPacketsRemoveFromTeam(TeamHandler team, String player) {
         boolean cont = false;
@@ -476,7 +453,7 @@ public class NametagManager {
                 }
             }
         }
-        
+
         if (!cont) {
             return;
         }
