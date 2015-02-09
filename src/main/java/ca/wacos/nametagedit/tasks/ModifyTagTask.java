@@ -39,10 +39,10 @@ public class ModifyTagTask extends BukkitRunnable {
                 if (uuid == null && sender != null) {
                     Messages.UUID_LOOKUP_FAILED.send(sender, player);
                 } else {
-                    if (!plugin.getNTEHandler().getPlayerData().containsKey(uuid)) {
-                        plugin.getNTEHandler().getPlayerData().put(uuid, new PlayerData(player, uuid, "", ""));
+                    if (!plugin.getNteHandler().getPlayerData().containsKey(uuid)) {
+                        plugin.getNteHandler().getPlayerData().put(uuid, new PlayerData(player, uuid, "", ""));
                     } else {
-                        PlayerData data = plugin.getNTEHandler().getPlayerData().get(uuid);
+                        PlayerData data = plugin.getNteHandler().getPlayerData().get(uuid);
                         switch (id) {
                             case 1:
                                 data.setPrefix(value);

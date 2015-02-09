@@ -31,7 +31,7 @@ public class SQLDataTask extends BukkitRunnable {
         String playerQuery = "SELECT * FROM `players`;";
 
         try {
-            connection = plugin.getConnectionPool().getConnection();
+            connection = plugin.getHikari().getConnection();
 
             ResultSet results = connection.prepareStatement(groupQuery).executeQuery();
 
@@ -69,16 +69,16 @@ public class SQLDataTask extends BukkitRunnable {
                     plugin.getLogger().info("[MySQL] Found " + groupDataTemp.size() + " groups");
                     plugin.getLogger().info("[MySQL] Found " + playerDataTemp.size() + " players");
 
-                    plugin.getNTEHandler().setGroupDataMap(groupDataTemp);
-                    plugin.getNTEHandler().setPlayerDataMap(playerDataTemp);
+                    plugin.getNteHandler().setGroupDataMap(groupDataTemp);
+                    plugin.getNteHandler().setPlayerDataMap(playerDataTemp);
 
-                    plugin.getNTEHandler().getAllGroups().clear();
+                    plugin.getNteHandler().getAllGroups().clear();
 
                     for (String s : groupDataTemp.keySet()) {
-                        plugin.getNTEHandler().getAllGroups().add(s);
+                        plugin.getNteHandler().getAllGroups().add(s);
                     }
 
-                    plugin.getNTEHandler().applyTags();
+                    plugin.getNteHandler().applyTags();
                 }
             }.runTask(plugin);
         }

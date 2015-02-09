@@ -1,14 +1,9 @@
 package ca.wacos.nametagedit;
 
-import ca.wacos.nametagedit.core.NametagHandler;
-import ca.wacos.nametagedit.core.NametagManager;
-import ca.wacos.nametagedit.events.AsyncPlayerChat;
-import ca.wacos.nametagedit.events.PlayerJoin;
-import ca.wacos.nametagedit.tasks.SQLDataTask;
-import ca.wacos.nametagedit.tasks.TableCreatorTask;
-import ca.wacos.nametagedit.utils.FileManager;
-import com.zaxxer.hikari.HikariDataSource;
 import java.io.IOException;
+
+import lombok.Getter;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.HandlerList;
@@ -17,14 +12,26 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
 
+import ca.wacos.nametagedit.core.NametagHandler;
+import ca.wacos.nametagedit.core.NametagManager;
+import ca.wacos.nametagedit.events.AsyncPlayerChat;
+import ca.wacos.nametagedit.events.PlayerJoin;
+import ca.wacos.nametagedit.tasks.SQLDataTask;
+import ca.wacos.nametagedit.tasks.TableCreatorTask;
+import ca.wacos.nametagedit.utils.FileManager;
+
+import com.zaxxer.hikari.HikariDataSource;
+
 /**
  * This is the main class for the NametagEdit plugin.
  *
  * @author sgtcaze
  *
  */
+@Getter
 public class NametagEdit extends JavaPlugin {
 
+    @Getter
     private static NametagEdit instance;
 
     private Listener chatListener;
@@ -33,7 +40,7 @@ public class NametagEdit extends JavaPlugin {
     private NametagHandler nteHandler;
     private NametagManager nametagManager;
 
-    private HikariDataSource connectionPool;
+    private HikariDataSource hikari;
 
     @Override
     public void onEnable() {
@@ -85,33 +92,9 @@ public class NametagEdit extends JavaPlugin {
 
         nteHandler.saveFileData();
 
-        if (connectionPool != null) {
-            connectionPool.shutdown();
+        if (hikari != null) {
+            hikari.shutdown();
         }
-    }
-
-    public static NametagEdit getInstance() {
-        return instance;
-    }
-
-    public NametagManager getNametagManager() {
-        return nametagManager;
-    }
-
-    public NametagHandler getNTEHandler() {
-        return nteHandler;
-    }
-
-    public FileManager getFileUtils() {
-        return fileUtils;
-    }
-
-    public HikariDataSource getConnectionPool() {
-        return connectionPool;
-    }
-
-    public Listener getChatListener() {
-        return chatListener;
     }
 
     public void registerChatListener() {
@@ -131,13 +114,13 @@ public class NametagEdit extends JavaPlugin {
         String username = config.getString("MySQL.Username");
         String password = config.getString("MySQL.Password");
 
-        connectionPool = new HikariDataSource();
-        connectionPool.setMaximumPoolSize(5);
-        connectionPool.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
-        connectionPool.addDataSourceProperty("serverName", address);
-        connectionPool.addDataSourceProperty("port", "3306");
-        connectionPool.addDataSourceProperty("databaseName", name);
-        connectionPool.addDataSourceProperty("user", username);
-        connectionPool.addDataSourceProperty("password", password);
+        hikari = new HikariDataSource();
+        hikari.setMaximumPoolSize(5);
+        hikari.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
+        hikari.addDataSourceProperty("serverName", address);
+        hikari.addDataSourceProperty("port", "3306");
+        hikari.addDataSourceProperty("databaseName", name);
+        hikari.addDataSourceProperty("user", username);
+        hikari.addDataSourceProperty("password", password);
     }
 }

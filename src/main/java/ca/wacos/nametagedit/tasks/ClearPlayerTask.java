@@ -38,7 +38,7 @@ public class ClearPlayerTask extends BukkitRunnable {
                         // Send info that
                     }
 
-                    plugin.getNTEHandler().getPlayerData().remove(uuid);
+                    plugin.getNteHandler().getPlayerData().remove(uuid);
                 }
             }
         }.runTask(plugin);

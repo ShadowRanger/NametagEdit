@@ -22,7 +22,7 @@ public class UpdateGroupTask extends BukkitRunnable {
         Connection connection = null;
 
         try {
-            connection = NametagEdit.getInstance().getConnectionPool().getConnection();
+            connection = NametagEdit.getInstance().getHikari().getConnection();
 
             String query = "UPDATE `" + table + "` SET `" + field + "`=? WHERE `name`=?;";
 

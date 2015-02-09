@@ -17,6 +17,17 @@ public class NametagAPI {
     private NametagAPI() {
         // To restrict developers from accessing this class non-statically
     }
+    
+    /**
+     * Clears the players existing prefix and suffix data</br></br>This method
+     * is useful when the tag is frequently updated, so as to avoid "Cannot remove
+     * from team" error
+     * 
+     * @param player the player to clear
+     */
+    public static void clear(String player) {
+        NametagManager.clear(player);
+    }
 
     /**
      * Sets the custom prefix for the given player </br></br> This method

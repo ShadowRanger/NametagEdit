@@ -118,8 +118,7 @@ public class NametagHandler {
     }
 
     private void setBlankTag(Player p) {
-        String str = "§f" + p.getName();
-        String tab = "";
+        String str = "§f" + p.getName(), tab = "";
         for (int t = 0; t < str.length() && t < 16; t++) {
             tab += str.charAt(t);
         }
@@ -134,7 +133,7 @@ public class NametagHandler {
         groupsFile.set("Order", allGroups);
 
         for (PlayerData data : playerData.values()) {
-            String uuid = data.getUUID();
+            String uuid = data.getUuid();
             String name = data.getName();
             playersFile.set("Players." + uuid + ".Name", name);
             playersFile.set("Players." + uuid + ".Prefix", data.getPrefix());
@@ -142,7 +141,7 @@ public class NametagHandler {
         }
 
         for (GroupData data : groupData.values()) {
-            String name = data.getName();
+            String name = data.getGroupName();
             groupsFile.set("Groups." + name + ".Permission", data.getPermission());
             groupsFile.set("Groups." + name + ".Prefix", data.getPrefix());
             groupsFile.set("Groups." + name + ".Suffix", data.getSuffix());
@@ -174,7 +173,7 @@ public class NametagHandler {
         for (String s : playersFile.getConfigurationSection("Players").getKeys(false)) {
             PlayerData data = new PlayerData();
             data.setName(playersFile.getString("Players." + s + ".Name"));
-            data.setUUID(s);
+            data.setUuid(s);
             data.setPrefix(playersFile.getString("Players." + s + ".Prefix", ""));
             data.setSuffix(playersFile.getString("Players." + s + ".Suffix", ""));
             playerData.put(s, data);

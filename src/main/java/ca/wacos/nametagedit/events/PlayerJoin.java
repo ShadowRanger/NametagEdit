@@ -24,7 +24,7 @@ public class PlayerJoin implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                plugin.getNTEHandler().applyTagToPlayer(p);
+                plugin.getNteHandler().applyTagToPlayer(p);
             }
         }.runTaskLater(plugin, 1);
     }

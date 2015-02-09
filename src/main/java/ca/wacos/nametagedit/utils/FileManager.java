@@ -1,7 +1,9 @@
 package ca.wacos.nametagedit.utils;
 
 import ca.wacos.nametagedit.NametagEdit;
+
 import com.google.common.io.Files;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -154,6 +157,7 @@ public class FileManager {
         Files.move(oldFile, new File(plugin.getDataFolder(), "groups_old.txt"));
     }
 
+    @SuppressWarnings("deprecation")
     private void convertUsers() throws IOException {
         File oldFile = new File(plugin.getDataFolder(), "players.txt");
         try (BufferedReader reader = new BufferedReader(new FileReader(oldFile))) {

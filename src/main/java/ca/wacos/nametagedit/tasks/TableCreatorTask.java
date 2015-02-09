@@ -22,7 +22,7 @@ public class TableCreatorTask extends BukkitRunnable {
         Connection connection = null;
 
         try {
-            connection = NametagEdit.getInstance().getConnectionPool().getConnection();
+            connection = NametagEdit.getInstance().getHikari().getConnection();
 
             PreparedStatement insert = null;
 
