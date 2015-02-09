@@ -8,6 +8,7 @@
 == New Features
 *Add option to make API changes persistent/temporary
 *Possible under Nametag altering
+*Add support for Vault prefixes/suffixes
 
 == Fixes
 *Resolve issues with file reloading
