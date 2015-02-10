@@ -1,123 +1,123 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>com.wacos</groupId>
-    <artifactId>NametagEdit</artifactId>
-    <version>3.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
-    <name>NametagEdit</name>
-    <url>http://maven.apache.org</url>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-    <dependencies>
-        <!-- Bukkit -->
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>LATEST</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- MCStats -->
-        <dependency>
-            <groupId>org.mcstats.bukkit</groupId>
-            <artifactId>metrics</artifactId>
-            <version>R7</version>
-            <scope>compile</scope>
-        </dependency>
-        <!-- HikariCP -->
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP-java6</artifactId>
-            <version>2.0.1</version>
-            <scope>compile</scope>
-        </dependency>
-        <!-- Javassist -->
-        <dependency>
-            <groupId>org.javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <version>3.18.1-GA</version>
-        </dependency>
-        <!-- SLF4J -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.5</version>
-        </dependency>
-		<!-- Lombok -->
-	  	<dependency>
-		    <groupId>org.projectlombok</groupId>
-		    <artifactId>lombok</artifactId>
-		    <version>1.14.8</version>
-		    <scope>provided</scope>
-	    </dependency>
-    </dependencies>
-    <repositories>
-        <!-- Bukkit -->
-        <repository>
-            <id>bukkit-repo</id>
-            <url>http://repo.bukkit.org/content/groups/public/</url>
-        </repository>
-        <!-- MCStats -->
-        <repository>
-            <id>Plugin Metrics</id>
-            <url>http://repo.mcstats.org/content/repositories/public</url>
-        </repository>
-        <repository>
-            <id>upstream</id>
-            <url>http://ci.playmc.cc/plugin/repository/everything/</url>
-        </repository>
-    </repositories>
-    <!-- Builds NametagEdit -->
-    <build>
-        <defaultGoal>clean package install</defaultGoal>
-        <finalName>NametagEdit</finalName>
-        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
-        <resources>
-            <resource>
-                <targetPath>.</targetPath>
-                <filtering>true</filtering>
-                <directory>${basedir}/src/main/resources/</directory>
-                <includes>
-                    <include>*.*</include>
-                </includes>
-            </resource>
-        </resources>
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
-            <!-- Compile all Libs -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.3</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <minimizeJar>true</minimizeJar>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <artifactSet>
-                                <includes>
-                                    <include>org.mcstats.bukkit</include>
-                                    <include>org.slf4j:*</include>
-                                    <include>com.zaxxer:*</include>
-                                    <include>org.javassist:javassist</include>
-                                </includes>
-                            </artifactSet>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>com.wacos</groupId>
+   <artifactId>NametagEdit</artifactId>
+   <version>3.0-SNAPSHOT</version>
+   <packaging>jar</packaging>
+   <name>NametagEdit</name>
+   <url>http://maven.apache.org</url>
+   <properties>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+   </properties>
+   <dependencies>
+      <!-- Bukkit -->
+      <dependency>
+         <groupId>org.bukkit</groupId>
+         <artifactId>bukkit</artifactId>
+         <version>LATEST</version>
+         <scope>provided</scope>
+      </dependency>
+      <!-- MCStats -->
+      <dependency>
+         <groupId>org.mcstats.bukkit</groupId>
+         <artifactId>metrics</artifactId>
+         <version>R7</version>
+         <scope>compile</scope>
+      </dependency>
+      <!-- HikariCP -->
+      <dependency>
+         <groupId>com.zaxxer</groupId>
+         <artifactId>HikariCP-java6</artifactId>
+         <version>2.0.1</version>
+         <scope>compile</scope>
+      </dependency>
+      <!-- Javassist -->
+      <dependency>
+         <groupId>org.javassist</groupId>
+         <artifactId>javassist</artifactId>
+         <version>3.18.1-GA</version>
+      </dependency>
+      <!-- SLF4J -->
+      <dependency>
+         <groupId>org.slf4j</groupId>
+         <artifactId>slf4j-simple</artifactId>
+         <version>1.7.5</version>
+      </dependency>
+      <!-- Lombok -->
+      <dependency>
+         <groupId>org.projectlombok</groupId>
+         <artifactId>lombok</artifactId>
+         <version>1.14.8</version>
+         <scope>provided</scope>
+      </dependency>
+   </dependencies>
+   <repositories>
+      <!-- Bukkit -->
+      <repository>
+         <id>bukkit-repo</id>
+         <url>http://repo.bukkit.org/content/groups/public/</url>
+      </repository>
+      <!-- MCStats -->
+      <repository>
+         <id>Plugin Metrics</id>
+         <url>http://repo.mcstats.org/content/repositories/public</url>
+      </repository>
+      <repository>
+         <id>upstream</id>
+         <url>http://ci.playmc.cc/plugin/repository/everything/</url>
+      </repository>
+   </repositories>
+   <!-- Builds NametagEdit -->
+   <build>
+      <defaultGoal>clean package install</defaultGoal>
+      <finalName>NametagEdit</finalName>
+      <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+      <resources>
+         <resource>
+            <targetPath>.</targetPath>
+            <filtering>true</filtering>
+            <directory>${basedir}/src/main/resources/</directory>
+            <includes>
+               <include>*.*</include>
+            </includes>
+         </resource>
+      </resources>
+      <plugins>
+         <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>2.4</version>
+            <configuration>
+               <source>1.7</source>
+               <target>1.7</target>
+            </configuration>
+         </plugin>
+         <!-- Compile all Libs -->
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>2.3</version>
+            <executions>
+               <execution>
+                  <phase>package</phase>
+                  <goals>
+                     <goal>shade</goal>
+                  </goals>
+                  <configuration>
+                     <minimizeJar>true</minimizeJar>
+                     <createDependencyReducedPom>false</createDependencyReducedPom>
+                     <artifactSet>
+                        <includes>
+                           <include>org.mcstats.bukkit</include>
+                           <include>org.slf4j:*</include>
+                           <include>com.zaxxer:*</include>
+                           <include>org.javassist:javassist</include>
+                        </includes>
+                     </artifactSet>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+   </build>
 </project>

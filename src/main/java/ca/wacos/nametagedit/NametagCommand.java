@@ -140,7 +140,7 @@ public class NametagCommand implements CommandExecutor {
 
             String oper = format(args, 2, args.length);
 
-            setType(sender, targetName, type, NametagAPI.trim(oper));
+            setType(sender, targetName, type, NametagAPI.trim(colorize(oper)));
 
             if (plugin.getNteHandler().usingDatabase() && target != null) {
                 new UpdatePlayerTask(target.getUniqueId().toString(), target.getName(), NametagManager.getPrefix(target.getName()), NametagManager.getSuffix(target.getName())).runTaskAsynchronously(plugin);
