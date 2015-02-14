@@ -140,7 +140,7 @@ public class NametagCommand implements CommandExecutor {
 
             String oper = format(args, 2, args.length);
 
-            setType(sender, targetName, type, NametagAPI.trim(colorize(oper)));
+            setType(sender, targetName, type, NametagAPI.format(oper));
 
             if (plugin.getNteHandler().usingDatabase() && target != null) {
                 new UpdatePlayerTask(target.getUniqueId().toString(), target.getName(), NametagManager.getPrefix(target.getName()), NametagManager.getSuffix(target.getName())).runTaskAsynchronously(plugin);
@@ -217,22 +217,22 @@ public class NametagCommand implements CommandExecutor {
                     } else if (args[2].equalsIgnoreCase("prefix")) {
                         String oper = format(args, 4, args.length);
 
-                        plugin.getNteHandler().getGroupData().get(group).setPrefix(NametagAPI.trim(oper));
+                        plugin.getNteHandler().getGroupData().get(group).setPrefix(NametagAPI.format(oper));
 
-                        Messages.GROUP_VALUE.sendMulti(sender, group, "prefix", NametagAPI.trim(oper));
+                        Messages.GROUP_VALUE.sendMulti(sender, group, "prefix", NametagAPI.format(oper));
 
                         if (plugin.getNteHandler().usingDatabase()) {
-                            new UpdateGroupTask("groups", "prefix", group, NametagAPI.trim(oper)).runTaskAsynchronously(plugin);
+                            new UpdateGroupTask("groups", "prefix", group, NametagAPI.format(oper)).runTaskAsynchronously(plugin);
                         }
                     } else if (args[2].equalsIgnoreCase("suffix")) {
                         String oper = format(args, 4, args.length);
 
-                        plugin.getNteHandler().getGroupData().get(group).setSuffix(NametagAPI.trim(oper));
+                        plugin.getNteHandler().getGroupData().get(group).setSuffix(NametagAPI.format(oper));
 
-                        Messages.GROUP_VALUE.sendMulti(sender, group, "suffix", NametagAPI.trim(oper));
+                        Messages.GROUP_VALUE.sendMulti(sender, group, "suffix", NametagAPI.format(oper));
 
                         if (plugin.getNteHandler().usingDatabase()) {
-                            new UpdateGroupTask("groups", "suffix", group, NametagAPI.trim(oper)).runTaskAsynchronously(plugin);
+                            new UpdateGroupTask("groups", "suffix", group, NametagAPI.format(oper)).runTaskAsynchronously(plugin);
                         }
                     }
                 } else {

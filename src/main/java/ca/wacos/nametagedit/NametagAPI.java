@@ -43,10 +43,10 @@ public class NametagAPI {
         Bukkit.getScheduler().scheduleSyncDelayedTask(NametagEdit.getInstance(), new Runnable() {
             @Override
             public void run() {
-                NametagChangeEvent e = new NametagChangeEvent(player, getPrefix(player), getSuffix(player), trim(colorize(prefix)), "", NametagChangeType.SOFT, NametagChangeReason.CUSTOM);
+                NametagChangeEvent e = new NametagChangeEvent(player, getPrefix(player), getSuffix(player), format(prefix), "", NametagChangeType.SOFT, NametagChangeReason.CUSTOM);
                 Bukkit.getServer().getPluginManager().callEvent(e);
                 if (!e.isCancelled()) {
-                    NametagManager.update(player, trim(colorize(prefix)), "");
+                    NametagManager.update(player, format(prefix), "");
                 }
             }
         });
@@ -64,10 +64,10 @@ public class NametagAPI {
         Bukkit.getScheduler().scheduleSyncDelayedTask(NametagEdit.getInstance(), new Runnable() {
             @Override
             public void run() {
-                NametagChangeEvent e = new NametagChangeEvent(player, getPrefix(player), getSuffix(player), "", trim(colorize(suffix)), NametagChangeType.SOFT, NametagChangeReason.CUSTOM);
+                NametagChangeEvent e = new NametagChangeEvent(player, getPrefix(player), getSuffix(player), "", format(suffix), NametagChangeType.SOFT, NametagChangeReason.CUSTOM);
                 Bukkit.getServer().getPluginManager().callEvent(e);
                 if (!e.isCancelled()) {
-                    NametagManager.update(player, "", trim(colorize(suffix)));
+                    NametagManager.update(player, "", format(suffix));
                 }
             }
         });
@@ -88,10 +88,10 @@ public class NametagAPI {
         Bukkit.getScheduler().scheduleSyncDelayedTask(NametagEdit.getInstance(), new Runnable() {
             @Override
             public void run() {
-                NametagChangeEvent e = new NametagChangeEvent(player, getPrefix(player), getSuffix(player), trim(colorize(prefix)), trim(colorize(suffix)), NametagChangeType.HARD, NametagChangeReason.CUSTOM);
+                NametagChangeEvent e = new NametagChangeEvent(player, getPrefix(player), getSuffix(player), format(prefix), format(suffix), NametagChangeType.HARD, NametagChangeReason.CUSTOM);
                 Bukkit.getServer().getPluginManager().callEvent(e);
                 if (!e.isCancelled()) {
-                    NametagManager.overlap(player, trim(colorize(prefix)), trim(colorize(suffix)));
+                    NametagManager.overlap(player, format(prefix), format(suffix));
                 }
             }
         });
@@ -111,10 +111,10 @@ public class NametagAPI {
         Bukkit.getScheduler().scheduleSyncDelayedTask(NametagEdit.getInstance(), new Runnable() {
             @Override
             public void run() {
-                NametagChangeEvent e = new NametagChangeEvent(player, getPrefix(player), getSuffix(player), trim(colorize(prefix)), trim(colorize(suffix)), NametagChangeType.SOFT, NametagChangeReason.CUSTOM);
+                NametagChangeEvent e = new NametagChangeEvent(player, getPrefix(player), getSuffix(player), format(prefix), format(suffix), NametagChangeType.SOFT, NametagChangeReason.CUSTOM);
                 Bukkit.getServer().getPluginManager().callEvent(e);
                 if (!e.isCancelled()) {
-                    NametagManager.update(player, trim(colorize(prefix)), trim(colorize(suffix)));
+                    NametagManager.update(player, format(prefix), format(suffix));
                 }
             }
         });
@@ -140,10 +140,10 @@ public class NametagAPI {
         Bukkit.getScheduler().scheduleSyncDelayedTask(NametagEdit.getInstance(), new Runnable() {
             @Override
             public void run() {
-                NametagChangeEvent e = new NametagChangeEvent(player, getPrefix(player), getSuffix(player), trim(colorize(prefix)), trim(colorize(suffix)), NametagChangeType.HARD, NametagChangeReason.CUSTOM);
+                NametagChangeEvent e = new NametagChangeEvent(player, getPrefix(player), getSuffix(player), format(prefix), format(suffix), NametagChangeType.HARD, NametagChangeReason.CUSTOM);
                 Bukkit.getServer().getPluginManager().callEvent(e);
                 if (!e.isCancelled()) {
-                    NametagManager.overlap(player, trim(colorize(prefix)), trim(colorize(suffix)));
+                    NametagManager.overlap(player, format(prefix), format(suffix));
                 }
             }
         });
@@ -168,10 +168,10 @@ public class NametagAPI {
         Bukkit.getScheduler().scheduleSyncDelayedTask(NametagEdit.getInstance(), new Runnable() {
             @Override
             public void run() {
-                NametagChangeEvent e = new NametagChangeEvent(player, getPrefix(player), getSuffix(player), trim(colorize(prefix)), trim(colorize(suffix)), NametagChangeType.SOFT, NametagChangeReason.CUSTOM);
+                NametagChangeEvent e = new NametagChangeEvent(player, getPrefix(player), getSuffix(player), format(prefix), format(suffix), NametagChangeType.SOFT, NametagChangeReason.CUSTOM);
                 Bukkit.getServer().getPluginManager().callEvent(e);
                 if (!e.isCancelled()) {
-                    NametagManager.update(player, trim(colorize(prefix)), trim(colorize(suffix)));
+                    NametagManager.update(player, format(prefix), format(suffix));
                 }
             }
         });
@@ -208,23 +208,14 @@ public class NametagAPI {
     }
 
     /**
-     * Function trims a string
-     *
-     * @param input string to trim
-     * @return a <= 16 character string
+     * Function colorizes and formats a string input, and will
+     * concatenate if it the string exceeds 16 characters
+     * 
+     * @param input the string to format
+     * @return the formatted string
      */
-    public static String trim(String input) {
-        if (input.length() > 16) {
-            String temp = input;
-            input = "";
-            for (int t = 0; t < 16; t++) {
-                input += temp.charAt(t);
-            }
-        }
-        return input;
-    }
-    
-    public static String colorize(String input) {
-        return ChatColor.translateAlternateColorCodes('&', input);
+    public static String format(String input) {
+        input = ChatColor.translateAlternateColorCodes('&', input);
+        return input.length() > 16 ? input.substring(0, 16) : input;
     }
 }

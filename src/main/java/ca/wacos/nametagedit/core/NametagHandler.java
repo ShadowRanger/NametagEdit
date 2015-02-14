@@ -1,5 +1,18 @@
 package ca.wacos.nametagedit.core;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
+
 import ca.wacos.nametagedit.Messages;
 import ca.wacos.nametagedit.NametagAPI;
 import ca.wacos.nametagedit.NametagChangeEvent.NametagChangeReason;
@@ -8,18 +21,6 @@ import ca.wacos.nametagedit.NametagEdit;
 import ca.wacos.nametagedit.data.GroupData;
 import ca.wacos.nametagedit.data.PlayerData;
 import ca.wacos.nametagedit.tasks.SQLDataTask;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.World;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 
 /**
  * This class loads all group/player data, and applies the tags during
@@ -112,11 +113,6 @@ public class NametagHandler {
         return Collections.unmodifiableList(list);
     }
 
-    // Format input string
-    private String format(String input) {
-        return NametagAPI.trim(ChatColor.translateAlternateColorCodes('&', input));
-    }
-
     private void setBlankTag(Player p) {
         String str = "§f" + p.getName(), tab = "";
         for (int t = 0; t < str.length() && t < 16; t++) {
@@ -193,7 +189,7 @@ public class NametagHandler {
 
             if (playerData.containsKey(uuid)) {
                 PlayerData data = playerData.get(uuid);
-                NametagManager.overlap(p.getName(), format(data.getPrefix()), format(data.getSuffix()));
+                NametagManager.overlap(p.getName(), NametagAPI.format(data.getPrefix()), NametagAPI.format(data.getSuffix()));
             } else {
                 Permission perm = null;
 
@@ -203,7 +199,7 @@ public class NametagHandler {
                     perm = new Permission(data.getPermission(), PermissionDefault.FALSE);
 
                     if (p.hasPermission(perm)) {
-                        NametagCommand.setNametagSoft(p.getName(), format(data.getPrefix()), format(data.getSuffix()), NametagChangeReason.GROUP_NODE);
+                        NametagCommand.setNametagSoft(p.getName(), NametagAPI.format(data.getPrefix()), NametagAPI.format(data.getSuffix()), NametagChangeReason.GROUP_NODE);
                         break;
                     }
                 }
@@ -223,7 +219,7 @@ public class NametagHandler {
 
         if (playerData.containsKey(uuid)) {
             PlayerData data = playerData.get(uuid);
-            NametagManager.overlap(p.getName(), format(data.getPrefix()), format(data.getSuffix()));
+            NametagManager.overlap(p.getName(), NametagAPI.format(data.getPrefix()), NametagAPI.format(data.getSuffix()));
         } else {
             Permission perm = null;
 
@@ -233,7 +229,7 @@ public class NametagHandler {
                 perm = new Permission(data.getPermission(), PermissionDefault.FALSE);
 
                 if (p.hasPermission(perm)) {
-                    NametagCommand.setNametagSoft(p.getName(), format(data.getPrefix()), format(data.getSuffix()), NametagChangeReason.GROUP_NODE);
+                    NametagCommand.setNametagSoft(p.getName(), NametagAPI.format(data.getPrefix()), NametagAPI.format(data.getSuffix()), NametagChangeReason.GROUP_NODE);
                     break;
                 }
             }
