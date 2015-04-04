@@ -16,6 +16,7 @@ import ca.wacos.nametagedit.core.NametagHandler;
 import ca.wacos.nametagedit.core.NametagManager;
 import ca.wacos.nametagedit.events.AsyncPlayerChat;
 import ca.wacos.nametagedit.events.PlayerJoin;
+import ca.wacos.nametagedit.events.PlayerQuit;
 import ca.wacos.nametagedit.tasks.SQLDataTask;
 import ca.wacos.nametagedit.tasks.TableCreatorTask;
 import ca.wacos.nametagedit.utils.FileManager;
@@ -54,6 +55,7 @@ public class NametagEdit extends JavaPlugin {
 
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new PlayerJoin(), this);
+        pm.registerEvents(new PlayerQuit(), this);
 
         FileConfiguration config = getConfig();
 
