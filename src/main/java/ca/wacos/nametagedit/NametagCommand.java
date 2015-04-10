@@ -284,7 +284,7 @@ public class NametagCommand implements CommandExecutor {
             String uuid = target.getUniqueId().toString();
 
             if (!plugin.getNteHandler().getPlayerData().containsKey(uuid)) {
-                plugin.getNteHandler().getPlayerData().put(uuid, new PlayerData(uuid, targetName, "", ""));
+                plugin.getNteHandler().getPlayerData().put(uuid, new PlayerData(targetName, uuid, "", ""));
             } else {
                 PlayerData data = plugin.getNteHandler().getPlayerData().get(uuid);
 
