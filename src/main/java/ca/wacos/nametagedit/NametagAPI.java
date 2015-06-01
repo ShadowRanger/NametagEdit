@@ -215,6 +215,10 @@ public class NametagAPI {
      * @return the formatted string
      */
     public static String format(String input) {
+        if (input == null) {
+            return null;
+        }
+        
         input = ChatColor.translateAlternateColorCodes('&', input);
         return input.length() > 16 ? input.substring(0, 16) : input;
     }
