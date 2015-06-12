@@ -24,7 +24,7 @@ public class UpdatePlayerTask extends BukkitRunnable {
         try {
             connection = NametagEdit.getInstance().getHikari().getConnection();
 
-            String query = "INSERT INTO `players` VALUES(?, ?, ?, ?) ON DUPLICATE KEY UPDATE `prefix`=?, `suffix`=?;";
+            String query = "INSERT INTO `players` VALUES(?, ?, ?, ?) ON DUPLICATE KEY UPDATE `prefix`=?, `suffix`=?";
 
             PreparedStatement p = connection.prepareStatement(query);
             p.setString(1, uuid);

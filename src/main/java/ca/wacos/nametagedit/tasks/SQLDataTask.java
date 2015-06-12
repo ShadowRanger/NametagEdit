@@ -27,8 +27,8 @@ public class SQLDataTask extends BukkitRunnable {
         final HashMap<String, GroupData> groupDataTemp = new HashMap<>();
         final HashMap<String, PlayerData> playerDataTemp = new HashMap<>();
 
-        String groupQuery = "SELECT * FROM `groups`;";
-        String playerQuery = "SELECT * FROM `players`;";
+        String groupQuery = "SELECT name, prefix, suffix, permission FROM groups";
+        String playerQuery = "SELECT name, uuid, prefix, suffix FROM players";
 
         try {
             connection = plugin.getHikari().getConnection();

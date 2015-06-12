@@ -7,6 +7,7 @@
 *Fix bug where chat listener was not unregistered/registered when toggled on/off
 *Removed redundant checks
 *Fixed issue with tab list not being cleared when enabled
+*Prevent full table scans for queries, rename players/groups tables for compatibility
 
 == v3.0-BETa
 

@@ -24,7 +24,7 @@ public class UpdateGroupTask extends BukkitRunnable {
         try {
             connection = NametagEdit.getInstance().getHikari().getConnection();
 
-            String query = "UPDATE `" + table + "` SET `" + field + "`=? WHERE `name`=?;";
+            String query = "UPDATE `" + table + "` SET `" + field + "`=? WHERE `name`=?";
 
             PreparedStatement p = connection.prepareStatement(query);
             p.setString(1, oper);

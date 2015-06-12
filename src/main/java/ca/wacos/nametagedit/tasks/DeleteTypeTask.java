@@ -23,7 +23,7 @@ public class DeleteTypeTask extends BukkitRunnable {
         try {
             connection = NametagEdit.getInstance().getHikari().getConnection();
 
-            String query = "DELETE FROM `" + table + "` WHERE `" + type + "`=?;";
+            String query = "DELETE FROM `" + table + "` WHERE `" + type + "`=?";
 
             PreparedStatement p = connection.prepareStatement(query);
             p.setString(1, val);
