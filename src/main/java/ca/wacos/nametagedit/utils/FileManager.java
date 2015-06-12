@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -25,20 +27,16 @@ import org.bukkit.configuration.file.YamlConfiguration;
  * @author sgtcaze
  *
  */
+@Getter
 public class FileManager {
 
+    private File groupsFile;
+    private File playersFile;
+
+    private YamlConfiguration groups;
+    private YamlConfiguration players;
+
     private final NametagEdit plugin = NametagEdit.getInstance();
-
-    private File groupsFile, playersFile;
-    private YamlConfiguration groups, players;
-
-    public YamlConfiguration getGroupsFile() {
-        return this.groups;
-    }
-
-    public YamlConfiguration getPlayersFile() {
-        return this.players;
-    }
 
     public void saveAllFiles() {
         try {
@@ -87,7 +85,7 @@ public class FileManager {
             inputStream = plugin.getResource(name);
             outputStream = new FileOutputStream(new File(plugin.getDataFolder() + "/" + name));
 
-            int read = 0;
+            int read;
             byte[] bytes = new byte[1024];
 
             while ((read = inputStream.read(bytes)) != -1) {

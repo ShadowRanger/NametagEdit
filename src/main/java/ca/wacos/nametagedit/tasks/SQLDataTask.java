@@ -1,14 +1,16 @@
 package ca.wacos.nametagedit.tasks;
 
+import ca.wacos.nametagedit.NametagAPI;
 import ca.wacos.nametagedit.NametagEdit;
+import ca.wacos.nametagedit.core.NametagHandler;
 import ca.wacos.nametagedit.data.GroupData;
 import ca.wacos.nametagedit.data.PlayerData;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import org.bukkit.ChatColor;
-import org.bukkit.scheduler.BukkitRunnable;
+import java.util.*;
 
 /**
  * This class is responsible for grabbing all data from the database and caching
@@ -20,35 +22,30 @@ public class SQLDataTask extends BukkitRunnable {
 
     private final NametagEdit plugin = NametagEdit.getInstance();
 
+    private static final String GROUP_QUERY = "SELECT name, prefix, suffix, permission FROM nte_groups";
+    private static final String PLAYER_QUERY = "SELECT name, uuid, prefix, suffix FROM nte_players";
+
     @Override
     public void run() {
+        final List<GroupData> groupData = new ArrayList<>();
+        final Map<UUID, PlayerData> playerData = new HashMap<>();
+
         Connection connection = null;
-
-        final HashMap<String, GroupData> groupDataTemp = new HashMap<>();
-        final HashMap<String, PlayerData> playerDataTemp = new HashMap<>();
-
-        String groupQuery = "SELECT name, prefix, suffix, permission FROM groups";
-        String playerQuery = "SELECT name, uuid, prefix, suffix FROM players";
 
         try {
             connection = plugin.getHikari().getConnection();
 
-            ResultSet results = connection.prepareStatement(groupQuery).executeQuery();
-
-            GroupData groupData;
+            ResultSet results = connection.prepareStatement(GROUP_QUERY).executeQuery();
 
             while (results.next()) {
-                groupData = new GroupData(results.getString("name"), results.getString("prefix"), results.getString("suffix"), results.getString("permission"));
-                groupDataTemp.put(results.getString("name"), groupData);
+                groupData.add(new GroupData(results.getString("name"), results.getString("prefix"), results.getString("suffix"), results.getString("permission")));
             }
 
-            results = connection.prepareStatement(playerQuery).executeQuery();
-
-            PlayerData playerData;
+            results = connection.prepareStatement(PLAYER_QUERY).executeQuery();
 
             while (results.next()) {
-                playerData = new PlayerData(results.getString("name"), results.getString("uuid"), colorize(results.getString("prefix")), colorize(results.getString("suffix")));
-                playerDataTemp.put(results.getString("name"), playerData);
+                UUID uuid = UUID.fromString(results.getString("uuid"));
+                playerData.put(uuid, new PlayerData(results.getString("name"), uuid, NametagAPI.colorize(results.getString("prefix")), NametagAPI.colorize(results.getString("suffix"))));
             }
 
             results.close();
@@ -66,25 +63,19 @@ public class SQLDataTask extends BukkitRunnable {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    plugin.getLogger().info("[MySQL] Found " + groupDataTemp.size() + " groups");
-                    plugin.getLogger().info("[MySQL] Found " + playerDataTemp.size() + " players");
-
-                    plugin.getNteHandler().setGroupDataMap(groupDataTemp);
-                    plugin.getNteHandler().setPlayerDataMap(playerDataTemp);
-
-                    plugin.getNteHandler().getAllGroups().clear();
-
-                    for (String s : groupDataTemp.keySet()) {
-                        plugin.getNteHandler().getAllGroups().add(s);
-                    }
-
-                    plugin.getNteHandler().applyTags();
+                    syncTask(groupData, playerData);
                 }
             }.runTask(plugin);
         }
     }
 
-    private String colorize(String input) {
-        return ChatColor.translateAlternateColorCodes('&', input);
+    private void syncTask(List<GroupData> groupData, Map<UUID, PlayerData> playerData) {
+        plugin.getLogger().info("[MySQL] Found " + groupData.size() + " groups");
+        plugin.getLogger().info("[MySQL] Found " + playerData.size() + " players");
+
+        NametagHandler nametagHandler = plugin.getNteHandler();
+        nametagHandler.setGroupData(groupData);
+        nametagHandler.setPlayerData(playerData);
+        nametagHandler.applyTags();
     }
 }

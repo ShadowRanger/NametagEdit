@@ -10,12 +10,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class TableCreatorTask extends BukkitRunnable {
 
-    private final List<String> queries = new ArrayList<>();
-
-    public TableCreatorTask() {
-        queries.add("CREATE TABLE IF NOT EXISTS `nte_players` (`uuid` varchar(64) NOT NULL, `name` varchar(16) NOT NULL, `prefix` varchar(16) NOT NULL, `suffix` varchar(16) NOT NULL, PRIMARY KEY (`uuid`))");
-        queries.add("CREATE TABLE IF NOT EXISTS `nte_groups` (`name` varchar(64) NOT NULL, `permission` varchar(16) NOT NULL, `prefix` varchar(16) NOT NULL, `suffix` varchar(16) NOT NULL, PRIMARY KEY (`name`))");
-    }
+    private final List<String> queries = new ArrayList<String>() {{
+        add("CREATE TABLE IF NOT EXISTS `nte_players` (`uuid` varchar(64) NOT NULL, `name` varchar(16) NOT NULL, `prefix` varchar(16) NOT NULL, `suffix` varchar(16) NOT NULL, PRIMARY KEY (`uuid`))");
+        add("CREATE TABLE IF NOT EXISTS `nte_groups` (`name` varchar(64) NOT NULL, `permission` varchar(16) NOT NULL, `prefix` varchar(16) NOT NULL, `suffix` varchar(16) NOT NULL, PRIMARY KEY (`name`))");
+    }};
 
     @Override
     public void run() {
@@ -26,8 +24,8 @@ public class TableCreatorTask extends BukkitRunnable {
 
             PreparedStatement insert = null;
 
-            for (String s : queries) {
-                insert = connection.prepareStatement(s);
+            for (String query : queries) {
+                insert = connection.prepareStatement(query);
                 insert.execute();
             }
 

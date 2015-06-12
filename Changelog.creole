@@ -2,6 +2,14 @@
 
 == v3.1
 *[BREAKING] Prevent full table scans for queries, rename players/groups tables for compatibility (Fixes #40)
+*Massive cleanup throughout
+*Prevent concurrent modification exception
+*Condense redundant initializers
+*Simplify a huge amount of the codebase
+*Fix group commands and sub-commands
+*Fix group data not being stored in the database
+*Provide more descriptive messages when using commands
+*Remove any "§" symbols
 
 == v3.0-SNAPSHOT
 *Remove unnecessary final modifiers

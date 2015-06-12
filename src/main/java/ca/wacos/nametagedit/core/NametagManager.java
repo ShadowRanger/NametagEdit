@@ -1,14 +1,11 @@
 package ca.wacos.nametagedit.core;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+
+import java.util.*;
 
 /**
  * This class dynamically creates teams with numerical names and certain
@@ -17,32 +14,16 @@ import org.bukkit.entity.Player;
  * to the <b>scoreboard.dat</b> file, adding and removing teams on the fly.
  *
  * @author Levi Webb
- *
  */
-@SuppressWarnings("all")
 public class NametagManager {
 
     // Prefix to append to all team names (nothing to do with prefix/suffix)
     private static final String TEAM_NAME_PREFIX = "NTE";
 
-    private static final List<Integer> list = new ArrayList<Integer>();
+    private static final List<Integer> LIST = new ArrayList<>();
+    private static final List<String> EMPTY_LIST = new ArrayList<>();
 
-    private static final HashMap<TeamHandler, List<String>> teams = new HashMap<TeamHandler, List<String>>();
-
-    private static void addToTeam(TeamHandler team, String player) {
-        removeFromTeam(player);
-        List<String> list = teams.get(team);
-        if (list != null) {
-            list.add(player);
-            Player p = Bukkit.getPlayerExact(player);
-            if (p != null) {
-                sendPacketsAddToTeam(team, p.getName());
-            } else {
-                OfflinePlayer p2 = Bukkit.getOfflinePlayer(player);
-                sendPacketsAddToTeam(team, p2.getName());
-            }
-        }
-    }
+    private static final HashMap<TeamHandler, List<String>> TEAMS = new HashMap<>();
 
     // Workaround for the deprecated getOnlinePlayers()
     public static List<Player> getOnline() {
@@ -56,30 +37,73 @@ public class NametagManager {
     }
 
     private static void register(TeamHandler team) {
-        teams.put(team, new ArrayList<String>());
+        TEAMS.put(team, EMPTY_LIST);
         sendPacketsAddTeam(team);
     }
 
     private static void removeTeam(TeamHandler team) {
         sendPacketsRemoveTeam(team);
-        teams.remove(team);
+        TEAMS.remove(team);
     }
 
-    private static TeamHandler removeFromTeam(String player) {
-        for (TeamHandler team : teams.keySet().toArray(
-                new TeamHandler[teams.size()])) {
-            List<String> list = teams.get(team);
-            for (String p : list.toArray(new String[list.size()])) {
-                if (p.equals(player)) {
-                    Player pl = Bukkit.getPlayerExact(player);
-                    if (pl != null) {
-                        sendPacketsRemoveFromTeam(team, pl.getName());
-                    } else {
-                        OfflinePlayer p2 = Bukkit.getOfflinePlayer(p);
-                        sendPacketsRemoveFromTeam(team, p2.getName());
-                    }
-                    list.remove(p);
+    private static Collection<TeamHandler> getTeams() {
+        return TEAMS.keySet();
+    }
 
+    public static void clear(String playerName) {
+        removeFromTeam(playerName);
+    }
+
+    private static List<String> getTeamPlayers(TeamHandler team) {
+        List<String> list = TEAMS.get(team);
+        return list == null ? new ArrayList<String>() : list;
+    }
+
+    private static TeamHandler getTeam(String teamName) {
+        for (TeamHandler team : TEAMS.keySet()) {
+            if (team.getName().equals(teamName)) {
+                return team;
+            }
+        }
+        return null;
+    }
+
+    private static void addToTeam(TeamHandler team, String playerName) {
+        removeFromTeam(playerName);
+        List<String> list = TEAMS.get(team);
+
+        if (list != null) {
+            list.add(playerName);
+            Player toAdd = Bukkit.getPlayerExact(playerName);
+
+            if (toAdd != null) {
+                sendPacketsAddToTeam(team, toAdd.getName());
+            } else {
+                OfflinePlayer toAddOffline = Bukkit.getOfflinePlayer(playerName);
+                sendPacketsAddToTeam(team, toAddOffline.getName());
+            }
+        }
+    }
+
+    private static TeamHandler removeFromTeam(String playerName) {
+        for (Map.Entry<TeamHandler, List<String>> entry : TEAMS.entrySet()) {
+            TeamHandler team = entry.getKey();
+            Iterator<String> list = entry.getValue().iterator();
+
+            while (list.hasNext()) {
+                String temp = list.next();
+
+                if (temp.equals(playerName)) {
+                    Player toRemove = Bukkit.getPlayerExact(playerName);
+
+                    if (toRemove != null) {
+                        sendPacketsRemoveFromTeam(team, toRemove.getName());
+                    } else {
+                        OfflinePlayer toRemoveOffline = Bukkit.getOfflinePlayer(temp);
+                        sendPacketsRemoveFromTeam(team, toRemoveOffline.getName());
+                    }
+
+                    list.remove();
                     return team;
                 }
             }
@@ -87,35 +111,14 @@ public class NametagManager {
         return null;
     }
 
-    private static TeamHandler getTeam(String name) {
-        for (TeamHandler team : teams.keySet().toArray(
-                new TeamHandler[teams.size()])) {
-            if (team.getName().equals(name)) {
-                return team;
-            }
-        }
-        return null;
-    }
-
-    private static TeamHandler[] getTeams() {
-        TeamHandler[] list = new TeamHandler[teams.size()];
-        int at = 0;
-        for (TeamHandler team : teams.keySet().toArray(
-                new TeamHandler[teams.size()])) {
-            list[at] = team;
-            at++;
-        }
-        return list;
-    }
-
-    private static String[] getTeamPlayers(TeamHandler team) {
-        List<String> list = teams.get(team);
-        if (list != null) {
-
-            return list.toArray(new String[list.size()]);
-        } else {
-            return new String[0];
-        }
+    /**
+     * Retrieves the player's entire name with both the prefix and suffix.
+     *
+     * @param player the specified player
+     * @return the entire nametag
+     */
+    public static String getFormattedName(String player) {
+        return getPrefix(player) + player + getSuffix(player);
     }
 
     /**
@@ -123,14 +126,17 @@ public class NametagManager {
      * this plugin.
      */
     public static void load() {
-        for (TeamHandler t : getTeams()) {
+        for (TeamHandler team : getTeams()) {
             int entry = -1;
+
             try {
-                entry = Integer.parseInt(t.getName());
-            } catch (Exception e) {
+                entry = Integer.parseInt(team.getName());
+            } catch (NumberFormatException e) {
+                // We're ignoring this. I don't know why.
             }
+
             if (entry != -1) {
-                list.add(entry);
+                LIST.add(entry);
             }
         }
     }
@@ -139,7 +145,7 @@ public class NametagManager {
      * Updates a player's prefix and suffix in the scoreboard and above their
      * head.<br>
      * <br>
-     *
+     * <p/>
      * If either the prefix or suffix is null or empty, it will be replaced with
      * the current prefix/suffix
      *
@@ -150,24 +156,20 @@ public class NametagManager {
     public static void update(String player, String prefix, String suffix) {
         if (prefix == null || prefix.isEmpty()) {
             prefix = getPrefix(player);
-
         }
 
         if (suffix == null || suffix.isEmpty()) {
             suffix = getSuffix(player);
-
         }
 
-        TeamHandler t = get(prefix, suffix);
-
-        addToTeam(t, player);
+        addToTeam(getTeamHandler(prefix, suffix), player);
     }
 
     /**
      * Updates a player's prefix and suffix in the scoreboard and above their
      * head.<br>
      * <br>
-     *
+     * <p/>
      * If either the prefix or suffix is null or empty, it will be removed from
      * the player's nametag.
      *
@@ -184,18 +186,7 @@ public class NametagManager {
             suffix = "";
         }
 
-        TeamHandler t = get(prefix, suffix);
-
-        addToTeam(t, player);
-    }
-
-    /**
-     * Clears a player's nametag.
-     *
-     * @param player the specified player
-     */
-    public static void clear(String player) {
-        removeFromTeam(player);
+        addToTeam(getTeamHandler(prefix, suffix), player);
     }
 
     /**
@@ -205,10 +196,10 @@ public class NametagManager {
      * @return the player's prefix
      */
     public static String getPrefix(String player) {
-        for (TeamHandler team : getTeams()) {
-            for (String p : getTeamPlayers(team)) {
-                if (p.equals(player)) {
-                    return team.getPrefix();
+        for (Map.Entry<TeamHandler, List<String>> entry : TEAMS.entrySet()) {
+            for (String member : entry.getValue()) {
+                if (member.equals(player)) {
+                    return entry.getKey().getPrefix();
                 }
             }
         }
@@ -222,10 +213,10 @@ public class NametagManager {
      * @return the player's suffix
      */
     public static String getSuffix(String player) {
-        for (TeamHandler team : getTeams()) {
-            for (String p : getTeamPlayers(team)) {
-                if (p.equals(player)) {
-                    return team.getSuffix();
+        for (Map.Entry<TeamHandler, List<String>> entry : TEAMS.entrySet()) {
+            for (String member : entry.getValue()) {
+                if (member.equals(player)) {
+                    return entry.getKey().getSuffix();
                 }
             }
         }
@@ -233,41 +224,26 @@ public class NametagManager {
     }
 
     /**
-     * Retrieves the player's entire name with both the prefix and suffix.
-     *
-     * @param player the specified player
-     * @return the entire nametag
-     */
-    public static String getFormattedName(String player) {
-        return getPrefix(player) + player + getSuffix(player);
-    }
-
-    /**
      * Declares a new team in the scoreboard.dat of the given main world.
      *
-     * @param name the team name
+     * @param name   the team name
      * @param prefix the team's prefix
      * @param suffix the team's suffix
      * @return the created team
      */
     private static TeamHandler declareTeam(String name, String prefix, String suffix) {
-        if (getTeam(name) != null) {
-            TeamHandler team = getTeam(name);
-            removeTeam(team);
-        }
+        removeTeam(getTeam(name));
 
         TeamHandler team = new TeamHandler(name);
-
         team.setPrefix(prefix);
         team.setSuffix(suffix);
-
         register(team);
 
         return team;
     }
 
     /**
-     * Gets the {@link net.minecraft.server.v1_5_R3.ScoreboardTeam} for the
+     * Gets the ScoreboardTeam for the
      * given prefix and suffix, and if none matches, creates a new team with the
      * provided info. This also removes teams that currently have no players.
      *
@@ -275,20 +251,18 @@ public class NametagManager {
      * @param suffix the team's suffix
      * @return a team with the corresponding prefix/suffix
      */
-    private static TeamHandler get(String prefix, String suffix) {
+    private static TeamHandler getTeamHandler(String prefix, String suffix) {
         update();
 
-        for (int t : list.toArray(new Integer[list.size()])) {
-            if (getTeam(TEAM_NAME_PREFIX + t) != null) {
-                TeamHandler team = getTeam(TEAM_NAME_PREFIX + t);
+        for (int index : LIST) {
+            TeamHandler team = getTeam(TEAM_NAME_PREFIX + index);
 
-                if (team.getSuffix().equals(suffix)
-                        && team.getPrefix().equals(prefix)) {
+            if (team != null) {
+                if (team.getSuffix().equalsIgnoreCase(suffix) && team.getPrefix().equals(prefix)) {
                     return team;
                 }
             }
         }
-
         return declareTeam(TEAM_NAME_PREFIX + nextName(), prefix, suffix);
     }
 
@@ -298,36 +272,36 @@ public class NametagManager {
      * @return an integer that for a team name that is not taken.
      */
     private static int nextName() {
-        int at = 0;
-        boolean cont = true;
-        while (cont) {
-            cont = false;
-            for (int t : list.toArray(new Integer[list.size()])) {
-                if (t == at) {
-                    at++;
-                    cont = true;
-                }
+        int index = 0;
 
-            }
+        while (LIST.contains(index)) {
+            index++;
         }
-        list.add(at);
-        return at;
+
+        LIST.add(index);
+        return index;
     }
 
     /**
      * Removes any teams that do not have any players in them.
      */
     private static void update() {
-        for (TeamHandler team : getTeams()) {
-            int entry = -1;
+        for (Map.Entry<TeamHandler, List<String>> entry : TEAMS.entrySet()) {
+            TeamHandler team = entry.getKey();
+            List<String> members = entry.getValue();
+
+            int id;
+
             try {
-                entry = Integer.parseInt(team.getName());
-            } catch (Exception e) {
+                id = Integer.parseInt(team.getName());
+            } catch (NumberFormatException e) {
+                continue; // Dead team?
             }
-            if (entry != -1) {
-                if (getTeamPlayers(team).length == 0) {
+
+            if (id != -1) {
+                if (members.isEmpty()) {
                     removeTeam(team);
-                    list.remove(new Integer(entry));
+                    LIST.remove(id);
                 }
             }
         }
@@ -342,12 +316,9 @@ public class NametagManager {
     public static void sendTeamsToPlayer(Player p) {
         try {
             for (TeamHandler team : getTeams()) {
-                PacketHandler mod = new PacketHandler(team.getName(),
-                        team.getPrefix(), team.getSuffix(),
-                        new ArrayList<String>(), 0);
+                PacketHandler mod = new PacketHandler(team.getName(), team.getPrefix(), team.getSuffix(), EMPTY_LIST, 0);
                 mod.sendToPlayer(p);
-                mod = new PacketHandler(team.getName(),
-                        Arrays.asList(getTeamPlayers(team)), 3);
+                mod = new PacketHandler(team.getName(), getTeamPlayers(team), 3);
                 mod.sendToPlayer(p);
             }
         } catch (Exception e) {
@@ -364,9 +335,7 @@ public class NametagManager {
         try {
             for (Player p : getOnline()) {
                 if (p != null) {
-                    PacketHandler mod = new PacketHandler(team.getName(),
-                            team.getPrefix(), team.getSuffix(),
-                            new ArrayList<String>(), 0);
+                    PacketHandler mod = new PacketHandler(team.getName(), team.getPrefix(), team.getSuffix(), EMPTY_LIST, 0);
                     mod.sendToPlayer(p);
                 }
             }
@@ -381,23 +350,15 @@ public class NametagManager {
      * @param team the team to remove
      */
     private static void sendPacketsRemoveTeam(TeamHandler team) {
-        boolean cont = false;
-        for (TeamHandler t : getTeams()) {
-            if (t == team) {
-                cont = true;
-            }
-        }
-        if (!cont) {
+        if(!TEAMS.containsKey(team)) {
             return;
         }
 
         try {
-            for (Player p : getOnline()) {
-                if (p != null) {
-                    PacketHandler mod = new PacketHandler(team.getName(),
-                            team.getPrefix(), team.getSuffix(),
-                            new ArrayList<String>(), 1);
-                    mod.sendToPlayer(p);
+            for (Player player : getOnline()) {
+                if (player != null) {
+                    PacketHandler mod = new PacketHandler(team.getName(), team.getPrefix(), team.getSuffix(), EMPTY_LIST, 1);
+                    mod.sendToPlayer(player);
                 }
             }
         } catch (Exception e) {
@@ -409,25 +370,18 @@ public class NametagManager {
      * Sends out packets to players to add the given player to the given team
      *
      * @param team the team to use
-     * @param player the player to add
+     * @param playerName the player to add
      */
-    private static void sendPacketsAddToTeam(TeamHandler team, String player) {
-        boolean cont = false;
-        for (TeamHandler t : getTeams()) {
-            if (t == team) {
-                cont = true;
-            }
-        }
-        if (!cont) {
+    private static void sendPacketsAddToTeam(TeamHandler team, String playerName) {
+        if(!TEAMS.containsKey(team)) {
             return;
         }
 
         try {
-            for (Player p : getOnline()) {
-                if (p != null) {
-                    PacketHandler mod = new PacketHandler(team.getName(),
-                            Arrays.asList(player), 3);
-                    mod.sendToPlayer(p);
+            for (Player player : getOnline()) {
+                if (player != null) {
+                    PacketHandler mod = new PacketHandler(team.getName(), Arrays.asList(playerName), 3);
+                    mod.sendToPlayer(player);
                 }
             }
         } catch (Exception e) {
@@ -439,32 +393,23 @@ public class NametagManager {
      * Sends out packets to players to remove the given player from the given
      * team.
      *
-     * @param team the team to remove from
-     * @param player the player to remove
+     * @param team   the team to remove from
+     * @param playerName the player to remove
      */
-    private static void sendPacketsRemoveFromTeam(TeamHandler team, String player) {
-        boolean cont = false;
-        for (TeamHandler t : getTeams()) {
-            if (t == team) {
-                for (String p : getTeamPlayers(t)) {
-                    if (p.equals(player)) {
-                        cont = true;
-                    }
-                }
-            }
+    private static void sendPacketsRemoveFromTeam(TeamHandler team, String playerName) {
+        if(!TEAMS.containsKey(team)) {
+            return;
         }
 
-        if (!cont) {
+        if(!TEAMS.get(team).contains(playerName)) {
             return;
         }
 
         try {
-            for (Player p : getOnline()) {
-                if (p != null) {
-                    PacketHandler mod = new PacketHandler(team.getName(),
-                            Arrays.asList(player), 4);
-
-                    mod.sendToPlayer(p);
+            for (Player player : getOnline()) {
+                if (player != null) {
+                    PacketHandler mod = new PacketHandler(team.getName(), Arrays.asList(playerName), 4);
+                    mod.sendToPlayer(player);
                 }
             }
         } catch (Exception e) {
@@ -477,7 +422,8 @@ public class NametagManager {
      * the plugin is disabled.
      */
     public static void reset() {
-        for (TeamHandler team : getTeams()) {
+        Collection<TeamHandler> teams = new ArrayList<>(getTeams());
+        for (TeamHandler team : teams) {
             removeTeam(team);
         }
     }

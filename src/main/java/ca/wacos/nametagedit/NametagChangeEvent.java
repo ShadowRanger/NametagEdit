@@ -1,5 +1,7 @@
 package ca.wacos.nametagedit;
 
+import ca.wacos.nametagedit.constants.NametagChangeReason;
+import ca.wacos.nametagedit.constants.NametagChangeType;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -13,8 +15,6 @@ import org.bukkit.event.HandlerList;
  */
 public class NametagChangeEvent extends Event implements Cancellable {
 
-    private static final HandlerList handlers = new HandlerList();
-
     private final String player;
     private final String oldPrefix;
     private final String oldSuffix;
@@ -26,12 +26,14 @@ public class NametagChangeEvent extends Event implements Cancellable {
 
     private boolean cancelled = false;
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+    private static final HandlerList handlers = new HandlerList();
 
     @Override
     public HandlerList getHandlers() {
+        return handlers;
+    }
+
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 
@@ -172,21 +174,5 @@ public class NametagChangeEvent extends Event implements Cancellable {
      */
     public boolean isCancelled() {
         return cancelled;
-    }
-
-    /**
-     * Represents the type of change a player's nametag can undergo
-     */
-    public enum NametagChangeType {
-
-        HARD, SOFT
-    }
-
-    /**
-     * Represents the reason or cause for the change of a player's nametag.
-     */
-    public enum NametagChangeReason {
-
-        SET_PREFIX, SET_SUFFIX, GROUP_NODE, CUSTOM
     }
 }

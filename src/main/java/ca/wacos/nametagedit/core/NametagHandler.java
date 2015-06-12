@@ -1,26 +1,23 @@
 package ca.wacos.nametagedit.core;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
+import ca.wacos.nametagedit.Messages;
+import ca.wacos.nametagedit.NametagAPI;
+import ca.wacos.nametagedit.NametagCommand;
+import ca.wacos.nametagedit.NametagEdit;
+import ca.wacos.nametagedit.constants.NametagChangeReason;
+import ca.wacos.nametagedit.data.GroupData;
+import ca.wacos.nametagedit.data.PlayerData;
+import ca.wacos.nametagedit.tasks.SQLDataTask;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
-import ca.wacos.nametagedit.Messages;
-import ca.wacos.nametagedit.NametagAPI;
-import ca.wacos.nametagedit.NametagChangeEvent.NametagChangeReason;
-import ca.wacos.nametagedit.NametagCommand;
-import ca.wacos.nametagedit.NametagEdit;
-import ca.wacos.nametagedit.data.GroupData;
-import ca.wacos.nametagedit.data.PlayerData;
-import ca.wacos.nametagedit.tasks.SQLDataTask;
+import java.util.*;
 
 /**
  * This class loads all group/player data, and applies the tags during
@@ -28,56 +25,34 @@ import ca.wacos.nametagedit.tasks.SQLDataTask;
  *
  * @author sgtcaze
  */
+@Getter
+@Setter
 public class NametagHandler {
+
+    private final boolean usingDatabase;
+    private final boolean tabListDisabled;
+
+    // Stores all "GroupData" classes in order
+    private List<GroupData> groupData = new ArrayList<>();
+
+    // Stores all player names to prefix/suffix
+    private Map<UUID, PlayerData> playerData = new HashMap<>();
 
     private final NametagEdit plugin = NametagEdit.getInstance();
 
-    private final boolean useDatabase;
-
-    private final boolean tabListDisabled;
-
-    // Stores all group names in order
-    private List<String> allGroups = new ArrayList<>();
-
-    // Stores all group names to permissions/prefix/suffix
-    private HashMap<String, GroupData> groupData = new HashMap<>();
-
-    // Stores all player names to prefix/suffix
-    private HashMap<String, PlayerData> playerData = new HashMap<>();
-
-    public NametagHandler() {
-        this.useDatabase = plugin.getConfig().getBoolean("MySQL.Enabled");
-        this.tabListDisabled = plugin.getConfig().getBoolean("TabListDisabled");
+    public NametagHandler(FileConfiguration config) {
+        this.usingDatabase = config.getBoolean("MySQL.Enabled");
+        this.tabListDisabled = config.getBoolean("TabListDisabled");
     }
 
-    public boolean usingDatabase() {
-        return useDatabase;
+    private void setBlankTag(Player p) {
+        p.setPlayerListName(NametagAPI.format("&f" + p.getName()));
     }
 
-    public List<String> getAllGroups() {
-        return allGroups;
-    }
-
-    public HashMap<String, GroupData> getGroupData() {
-        return groupData;
-    }
-
-    public HashMap<String, PlayerData> getPlayerData() {
-        return playerData;
-    }
-
-    public void setGroupDataMap(HashMap<String, GroupData> map) {
-        this.groupData = map;
-    }
-
-    public void setPlayerDataMap(HashMap<String, PlayerData> map) {
-        this.playerData = map;
-    }
-
-    // Reloads files, and reapplies tags
+    // Reloads the current storage mechanism, and reapplies tags
     public void reload(CommandSender sender, boolean fromFile) {
-        if (usingDatabase()) {
-            new SQLDataTask().runTaskAsynchronously(plugin);
+        if (usingDatabase) {
+            new SQLDataTask().runTaskAsynchronously(plugin); // Load from the database
         } else {
             if (fromFile) {
                 plugin.reloadConfig();
@@ -96,47 +71,26 @@ public class NametagHandler {
             }
 
             loadFromFile();
-
             applyTags();
         }
 
         Messages.RELOADED_DATA.send(sender);
     }
 
-    // Workaround for the deprecated getOnlinePlayers()
-    public List<Player> getOnline() {
-        List<Player> list = new ArrayList<>();
-
-        for (World world : Bukkit.getWorlds()) {
-            list.addAll(world.getPlayers());
-        }
-        return Collections.unmodifiableList(list);
-    }
-
-    private void setBlankTag(Player p) {
-        String str = "§f" + p.getName(), tab = "";
-        for (int t = 0; t < str.length() && t < 16; t++) {
-            tab += str.charAt(t);
-        }
-        p.setPlayerListName(tab);
-    }
-
     // Saves all player and group data
     public void saveFileData() {
-        YamlConfiguration playersFile = plugin.getFileUtils().getPlayersFile();
-        YamlConfiguration groupsFile = plugin.getFileUtils().getGroupsFile();
-
-        groupsFile.set("Order", allGroups);
+        YamlConfiguration playersFile = plugin.getFileUtils().getPlayers();
+        YamlConfiguration groupsFile = plugin.getFileUtils().getGroups();
 
         for (PlayerData data : playerData.values()) {
-            String uuid = data.getUuid();
+            UUID uuid = data.getUuid();
             String name = data.getName();
             playersFile.set("Players." + uuid + ".Name", name);
             playersFile.set("Players." + uuid + ".Prefix", data.getPrefix());
             playersFile.set("Players." + uuid + ".Suffix", data.getSuffix());
         }
 
-        for (GroupData data : groupData.values()) {
+        for (GroupData data : groupData) {
             String name = data.getGroupName();
             groupsFile.set("Groups." + name + ".Permission", data.getPermission());
             groupsFile.set("Groups." + name + ".Prefix", data.getPrefix());
@@ -148,58 +102,54 @@ public class NametagHandler {
 
     // Loads all player and group data (file)
     public void loadFromFile() {
-        YamlConfiguration playersFile = plugin.getFileUtils().getPlayersFile();
-        YamlConfiguration groupsFile = plugin.getFileUtils().getGroupsFile();
+        YamlConfiguration playersFile = plugin.getFileUtils().getPlayers();
+        YamlConfiguration groupsFile = plugin.getFileUtils().getGroups();
 
         groupData.clear();
         playerData.clear();
 
-        allGroups.clear();
-        allGroups = groupsFile.getStringList("Order");
-
-        for (String s : allGroups) {
+        for (String key : groupsFile.getConfigurationSection("Groups").getKeys(false)) {
             GroupData data = new GroupData();
-            data.setGroupName(s);
-            data.setPermission(groupsFile.getString("Groups." + s + ".Permission"));
-            data.setPrefix(groupsFile.getString("Groups." + s + ".Prefix", ""));
-            data.setSuffix(groupsFile.getString("Groups." + s + ".Suffix", ""));
-            groupData.put(s, data);
+            data.setGroupName(key);
+            data.setPermission(groupsFile.getString("Groups." + key + ".Permission"));
+            data.setPrefix(groupsFile.getString("Groups." + key + ".Prefix", ""));
+            data.setSuffix(groupsFile.getString("Groups." + key + ".Suffix", ""));
+            groupData.add(data);
         }
 
-        for (String s : playersFile.getConfigurationSection("Players").getKeys(false)) {
+        for (String uuid : playersFile.getConfigurationSection("Players").getKeys(false)) {
             PlayerData data = new PlayerData();
-            data.setName(playersFile.getString("Players." + s + ".Name"));
-            data.setUuid(s);
-            data.setPrefix(playersFile.getString("Players." + s + ".Prefix", ""));
-            data.setSuffix(playersFile.getString("Players." + s + ".Suffix", ""));
-            playerData.put(s, data);
+            data.setName(playersFile.getString("Players." + uuid + ".Name"));
+            data.setUuid(UUID.fromString(uuid));
+            data.setPrefix(playersFile.getString("Players." + uuid + ".Prefix", ""));
+            data.setSuffix(playersFile.getString("Players." + uuid + ".Suffix", ""));
+            playerData.put(UUID.fromString(uuid), data);
         }
     }
 
     // Applies tags to online players (for /reload, and /ne reload)
     public void applyTags() {
-        for (Player p : getOnline()) {
+        for (Player p : NametagManager.getOnline()) {
             if (p == null) {
                 continue;
             }
 
             NametagManager.clear(p.getName());
 
-            String uuid = p.getUniqueId().toString();
+            UUID uuid = p.getUniqueId();
 
-            if (playerData.containsKey(uuid)) {
-                PlayerData data = playerData.get(uuid);
+            PlayerData data = playerData.get(uuid);
+
+            if(data != null) {
                 NametagManager.overlap(p.getName(), NametagAPI.format(data.getPrefix()), NametagAPI.format(data.getSuffix()));
             } else {
-                Permission perm = null;
+                Permission perm;
 
-                for (String s : allGroups) {
-                    GroupData data = groupData.get(s);
-
-                    perm = new Permission(data.getPermission(), PermissionDefault.FALSE);
+                for(GroupData group : groupData) {
+                    perm = new Permission(group.getPermission(), PermissionDefault.FALSE);
 
                     if (p.hasPermission(perm)) {
-                        NametagCommand.setNametagSoft(p.getName(), NametagAPI.format(data.getPrefix()), NametagAPI.format(data.getSuffix()), NametagChangeReason.GROUP_NODE);
+                        NametagCommand.setNametagSoft(p.getName(), NametagAPI.format(group.getPrefix()), NametagAPI.format(group.getSuffix()), NametagChangeReason.GROUP_NODE);
                         break;
                     }
                 }
@@ -213,23 +163,22 @@ public class NametagHandler {
 
     // Applies tags to a specific player
     public void applyTagToPlayer(Player p) {
-        String uuid = p.getUniqueId().toString();
+        UUID uuid = p.getUniqueId();
 
         NametagManager.clear(p.getName());
 
-        if (playerData.containsKey(uuid)) {
-            PlayerData data = playerData.get(uuid);
+        PlayerData data = playerData.get(uuid);
+
+        if(data != null) {
             NametagManager.overlap(p.getName(), NametagAPI.format(data.getPrefix()), NametagAPI.format(data.getSuffix()));
         } else {
-            Permission perm = null;
+            Permission perm;
 
-            for (String s : allGroups) {
-                GroupData data = groupData.get(s);
-
-                perm = new Permission(data.getPermission(), PermissionDefault.FALSE);
+            for(GroupData group : groupData) {
+                perm = new Permission(group.getPermission(), PermissionDefault.FALSE);
 
                 if (p.hasPermission(perm)) {
-                    NametagCommand.setNametagSoft(p.getName(), NametagAPI.format(data.getPrefix()), NametagAPI.format(data.getSuffix()), NametagChangeReason.GROUP_NODE);
+                    NametagCommand.setNametagSoft(p.getName(), NametagAPI.format(group.getPrefix()), NametagAPI.format(group.getSuffix()), NametagChangeReason.GROUP_NODE);
                     break;
                 }
             }

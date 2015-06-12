@@ -4,56 +4,66 @@ import ca.wacos.nametagedit.Messages;
 import ca.wacos.nametagedit.NametagEdit;
 import ca.wacos.nametagedit.data.PlayerData;
 import ca.wacos.nametagedit.utils.UUIDFetcher;
+import lombok.AllArgsConstructor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.UUID;
+
+@AllArgsConstructor
 public class ModifyTagTask extends BukkitRunnable {
 
-    private final int id;
+    private int id;
 
-    private final String player, value;
-    private String uuid;
+    private String player;
+    private String value;
 
-    private final CommandSender sender;
+    private CommandSender sender;
 
     private final NametagEdit plugin = NametagEdit.getInstance();
 
-    public ModifyTagTask(CommandSender sender, String player, String value, int id) {
-        this.sender = sender;
-        this.player = player;
-        this.value = value;
-        this.id = id;
-    }
-
     @Override
     public void run() {
+        UUID tempUUID = null;
+
         try {
-            uuid = UUIDFetcher.getUUIDOf(player).toString();
+            tempUUID = UUIDFetcher.getUUIDOf(player);
         } catch (Exception e) {
             plugin.getLogger().severe("Failed to retrieve UUID for " + player);
         }
 
+        final UUID uuid = tempUUID;
+
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (uuid == null && sender != null) {
-                    Messages.UUID_LOOKUP_FAILED.send(sender, player);
-                } else {
-                    if (!plugin.getNteHandler().getPlayerData().containsKey(uuid)) {
-                        plugin.getNteHandler().getPlayerData().put(uuid, new PlayerData(player, uuid, "", ""));
-                    } else {
-                        PlayerData data = plugin.getNteHandler().getPlayerData().get(uuid);
-                        switch (id) {
-                            case 1:
-                                data.setPrefix(value);
-                                break;
-                            case 2:
-                                data.setSuffix(value);
-                                break;
-                        }
-                    }
-                }
+                syncMethod(uuid);
             }
         }.runTask(plugin);
+    }
+
+    private void syncMethod(UUID uuid) {
+        if (uuid == null && sender != null) {
+            Messages.UUID_LOOKUP_FAILED.send(sender, player);
+        } else {
+            PlayerData data = plugin.getNteHandler().getPlayerData().get(uuid);
+
+            if (data == null) {
+                plugin.getNteHandler().getPlayerData().put(uuid, new PlayerData(player, uuid, "", ""));
+            } else {
+                switch (id) {
+                    case 1:
+                        data.setPrefix(value);
+                        break;
+                    case 2:
+                        data.setSuffix(value);
+                        break;
+                }
+            }
+
+            if (sender != null) {
+                Messages.OPERATION_COMPLETED.send(sender);
+            }
+        }
     }
 }

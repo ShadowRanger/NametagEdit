@@ -22,7 +22,6 @@ public class PacketHandler {
     private static Method sendPacket;
     private static Field playerConnection;
 
-    private static String version = "";
     private static String fieldPrefix = "";
     private static String fieldSuffix = "";
     private static String fieldPlayers = "";
@@ -33,7 +32,7 @@ public class PacketHandler {
 
     static {
         try {
-            version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+            String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
 
             Class<?> typeNMSPlayer = Class.forName("net.minecraft.server." + version + ".EntityPlayer");
             Class<?> typeCraftPlayer = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer");

@@ -1,7 +1,7 @@
 package ca.wacos.nametagedit;
 
-import ca.wacos.nametagedit.NametagChangeEvent.NametagChangeReason;
-import ca.wacos.nametagedit.NametagChangeEvent.NametagChangeType;
+import ca.wacos.nametagedit.constants.NametagChangeReason;
+import ca.wacos.nametagedit.constants.NametagChangeType;
 import ca.wacos.nametagedit.core.NametagManager;
 
 import org.bukkit.Bukkit;
@@ -221,5 +221,15 @@ public class NametagAPI {
         
         input = ChatColor.translateAlternateColorCodes('&', input);
         return input.length() > 16 ? input.substring(0, 16) : input;
+    }
+
+    /**
+     * Function colorizes and formats a string input
+     *
+     * @param input the string to format
+     * @return the formatted string
+     */
+    public static String colorize(String input) {
+        return ChatColor.translateAlternateColorCodes('&', input);
     }
 }

@@ -6,8 +6,8 @@ NametagEdit is an easy to configure plugin that allows users to change their nam
 *BukkitDev: [[http://dev.bukkit.org/bukkit-plugins/nametagedit|Click Here]]
 *Dev Builds: [[http://ci.playmc.cc/job/NametagEdit|Click Here]]
 
-== Versions for 1.5.2 through 1.8
-On the Jenkins, builds #10 and above support 1.8+ Spigot. #9 supports 1.5.2 - 1.8 "Spigot Protocol Hack".
+== Versions for 1.5.2 through 1.8.7
+On the Jenkins, builds past #12 should support ALL MineCraft versions. Please use the "issues" tab to report otherwise.
 
 == Commands
 
@@ -15,13 +15,13 @@ On the Jenkins, builds #10 and above support 1.8+ Spigot. #9 supports 1.5.2 - 1.
 | nte | none | Displays all available command arguments |
 | nte | reload <file/memory> | A 'file' reload takes active edits to the config while 'memory' overwrites from the cache |
 | nte | clear [player] | Clears the prefix and suffix for a player |
-| nte | <prefix/suffix> [text] | Sets the prefix or suffix for a player |
+| nte | <prefix/suffix> [player] <text> | Sets the prefix or suffix for a player |
 | nte | groups list | Lists all loaded groups |
 | nte | groups add [groupName] | Creates a new group |
 | nte | groups remove [groupName] | Removes a group |
-| nte | groups set [perm] [groupName] | Sets the default permission for a group |
-| nte | groups set [prefix] [groupName] | Sets the prefix for a group |
-| nte | groups set [suffix] [groupName] | Sets the suffix for a group |
+| nte | groups set [groupName] [perm] <value> | Sets the default permission for a group |
+| nte | groups set [groupName] [prefix] <value> | Sets the prefix for a group |
+| nte | groups set [groupName] [suffix] <value> | Sets the suffix for a group |
 
 == Example Command Usage
 

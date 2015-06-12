@@ -4,18 +4,18 @@ import ca.wacos.nametagedit.NametagEdit;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.UUID;
+
+import lombok.AllArgsConstructor;
 import org.bukkit.scheduler.BukkitRunnable;
 
+@AllArgsConstructor
 public class UpdatePlayerTask extends BukkitRunnable {
 
-    private final String uuid, name, prefix, suffix;
-
-    public UpdatePlayerTask(String uuid, String name, String prefix, String suffix) {
-        this.uuid = uuid;
-        this.name = name;
-        this.prefix = prefix;
-        this.suffix = suffix;
-    }
+    private UUID uuid;
+    private String name;
+    private String prefix;
+    private String suffix;
 
     @Override
     public void run() {
@@ -24,10 +24,10 @@ public class UpdatePlayerTask extends BukkitRunnable {
         try {
             connection = NametagEdit.getInstance().getHikari().getConnection();
 
-            String query = "INSERT INTO `players` VALUES(?, ?, ?, ?) ON DUPLICATE KEY UPDATE `prefix`=?, `suffix`=?";
+            String query = "INSERT INTO `nte_players` VALUES(?, ?, ?, ?) ON DUPLICATE KEY UPDATE `prefix`=?, `suffix`=?";
 
             PreparedStatement p = connection.prepareStatement(query);
-            p.setString(1, uuid);
+            p.setString(1, uuid.toString());
             p.setString(2, name);
             p.setString(3, prefix);
             p.setString(4, suffix);

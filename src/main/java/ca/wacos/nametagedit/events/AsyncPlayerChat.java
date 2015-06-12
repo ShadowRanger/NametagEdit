@@ -8,12 +8,12 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class AsyncPlayerChat implements Listener {
 
-    private final String format;
+    private final String CHAT_FORMAT;
 
     private final NametagEdit plugin = NametagEdit.getInstance();
 
     public AsyncPlayerChat() {
-        this.format = plugin.getConfig().getString("Chat.Format");
+        this.CHAT_FORMAT = plugin.getConfig().getString("Chat.Format");
     }
 
     @EventHandler
@@ -23,8 +23,6 @@ public class AsyncPlayerChat implements Listener {
         String prefix = NametagAPI.getPrefix(name);
         String suffix = NametagAPI.getSuffix(name);
 
-        String temp = format.replace("%prefix%", prefix).replace("%suffix%", suffix);
-
-        e.setFormat(temp);
+        e.setFormat(CHAT_FORMAT.replace("%prefix%", prefix).replace("%suffix%", suffix));
     }
 }

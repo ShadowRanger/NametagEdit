@@ -1,17 +1,5 @@
 package ca.wacos.nametagedit;
 
-import java.io.IOException;
-
-import lombok.Getter;
-
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.mcstats.Metrics;
-
 import ca.wacos.nametagedit.core.NametagHandler;
 import ca.wacos.nametagedit.core.NametagManager;
 import ca.wacos.nametagedit.events.AsyncPlayerChat;
@@ -20,8 +8,17 @@ import ca.wacos.nametagedit.events.PlayerQuit;
 import ca.wacos.nametagedit.tasks.SQLDataTask;
 import ca.wacos.nametagedit.tasks.TableCreatorTask;
 import ca.wacos.nametagedit.utils.FileManager;
-
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.Getter;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.mcstats.Metrics;
+
+import java.io.IOException;
 
 /**
  * This is the main class for the NametagEdit plugin.
@@ -48,7 +45,7 @@ public class NametagEdit extends JavaPlugin {
         instance = this;
 
         fileUtils = new FileManager();
-        nteHandler = new NametagHandler();
+        nteHandler = new NametagHandler(getConfig());
         nametagManager = new NametagManager();
 
         getCommand("ne").setExecutor(new NametagCommand());
@@ -64,6 +61,7 @@ public class NametagEdit extends JavaPlugin {
         }
 
         if (config.getBoolean("MetricsEnabled")) {
+
             try {
                 Metrics metrics = new Metrics(this);
                 metrics.start();
@@ -77,7 +75,7 @@ public class NametagEdit extends JavaPlugin {
 
         NametagManager.load();
 
-        if (nteHandler.usingDatabase()) {
+        if (nteHandler.isUsingDatabase()) {
             setupHikari();
             new TableCreatorTask().runTask(this);
             new SQLDataTask().runTask(this);

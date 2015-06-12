@@ -4,17 +4,16 @@ import ca.wacos.nametagedit.NametagEdit;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
+import lombok.AllArgsConstructor;
 import org.bukkit.scheduler.BukkitRunnable;
 
+@AllArgsConstructor
 public class DeleteTypeTask extends BukkitRunnable {
 
-    private final String table, type, val;
-
-    public DeleteTypeTask(String table, String type, String val) {
-        this.table = table;
-        this.type = type;
-        this.val = val;
-    }
+    private String table;
+    private String type;
+    private String val;
 
     @Override
     public void run() {
@@ -23,7 +22,7 @@ public class DeleteTypeTask extends BukkitRunnable {
         try {
             connection = NametagEdit.getInstance().getHikari().getConnection();
 
-            String query = "DELETE FROM `" + table + "` WHERE `" + type + "`=?";
+            String query = "DELETE FROM `nte_" + table + "` WHERE `" + type + "`=?";
 
             PreparedStatement p = connection.prepareStatement(query);
             p.setString(1, val);
