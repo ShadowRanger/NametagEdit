@@ -114,6 +114,7 @@ public class NametagHandler {
             data.setPermission(groupsFile.getString("Groups." + key + ".Permission"));
             data.setPrefix(groupsFile.getString("Groups." + key + ".Prefix", ""));
             data.setSuffix(groupsFile.getString("Groups." + key + ".Suffix", ""));
+            data.refresh();
             groupData.add(data);
         }
 
@@ -140,15 +141,11 @@ public class NametagHandler {
 
             PlayerData data = playerData.get(uuid);
 
-            if(data != null) {
+            if (data != null) {
                 NametagManager.overlap(p.getName(), NametagAPI.format(data.getPrefix()), NametagAPI.format(data.getSuffix()));
             } else {
-                Permission perm;
-
-                for(GroupData group : groupData) {
-                    perm = new Permission(group.getPermission(), PermissionDefault.FALSE);
-
-                    if (p.hasPermission(perm)) {
+                for (GroupData group : groupData) {
+                    if (p.hasPermission(group.getBukkitPermission())) {
                         NametagCommand.setNametagSoft(p.getName(), NametagAPI.format(group.getPrefix()), NametagAPI.format(group.getSuffix()), NametagChangeReason.GROUP_NODE);
                         break;
                     }
@@ -169,15 +166,11 @@ public class NametagHandler {
 
         PlayerData data = playerData.get(uuid);
 
-        if(data != null) {
+        if (data != null) {
             NametagManager.overlap(p.getName(), NametagAPI.format(data.getPrefix()), NametagAPI.format(data.getSuffix()));
         } else {
-            Permission perm;
-
-            for(GroupData group : groupData) {
-                perm = new Permission(group.getPermission(), PermissionDefault.FALSE);
-
-                if (p.hasPermission(perm)) {
+            for (GroupData group : groupData) {
+                if (p.hasPermission(group.getBukkitPermission())) {
                     NametagCommand.setNametagSoft(p.getName(), NametagAPI.format(group.getPrefix()), NametagAPI.format(group.getSuffix()), NametagChangeReason.GROUP_NODE);
                     break;
                 }

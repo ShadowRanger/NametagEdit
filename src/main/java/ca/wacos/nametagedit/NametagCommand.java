@@ -14,6 +14,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 
 import java.util.UUID;
 
@@ -198,7 +200,7 @@ public class NametagCommand implements CommandExecutor {
                         new AddGroupTask(group, "", "", "").runTaskAsynchronously(plugin);
                     }
 
-                    nametagHandler.getGroupData().add(new GroupData(group, "", "", ""));
+                    nametagHandler.getGroupData().add(new GroupData(group, "", "", "", new Permission("my.perm", PermissionDefault.FALSE)));
                 }
             } else if (args[1].equalsIgnoreCase("set")) {
                 if (args.length >= 5) {

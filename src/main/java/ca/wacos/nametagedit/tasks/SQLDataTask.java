@@ -5,6 +5,8 @@ import ca.wacos.nametagedit.NametagEdit;
 import ca.wacos.nametagedit.core.NametagHandler;
 import ca.wacos.nametagedit.data.GroupData;
 import ca.wacos.nametagedit.data.PlayerData;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.Connection;
@@ -38,7 +40,8 @@ public class SQLDataTask extends BukkitRunnable {
             ResultSet results = connection.prepareStatement(GROUP_QUERY).executeQuery();
 
             while (results.next()) {
-                groupData.add(new GroupData(results.getString("name"), results.getString("prefix"), results.getString("suffix"), results.getString("permission")));
+                groupData.add(new GroupData(results.getString("name"), results.getString("prefix"),
+                        results.getString("suffix"), results.getString("permission"), new Permission(results.getString("permission"), PermissionDefault.FALSE)));
             }
 
             results = connection.prepareStatement(PLAYER_QUERY).executeQuery();
