@@ -1,12 +1,17 @@
 package ca.wacos.nametagedit.tasks;
 
+import ca.wacos.nametagedit.Messages;
 import ca.wacos.nametagedit.NametagEdit;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import ca.wacos.nametagedit.data.PlayerData;
+import ca.wacos.nametagedit.utils.UUIDFetcher;
 import lombok.AllArgsConstructor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
 
 @AllArgsConstructor
@@ -16,10 +21,22 @@ public class UpdatePlayerTask extends BukkitRunnable {
     private String name;
     private String prefix;
     private String suffix;
+    private CommandSender sender;
+    private int id;
+
+    private final NametagEdit plugin = NametagEdit.getInstance();
 
     @Override
     public void run() {
         Connection connection = null;
+
+        if (uuid == null) {
+            try {
+                uuid = UUIDFetcher.getUUIDOf(name);
+            } catch (Exception e) {
+                return; // Woah
+            }
+        }
 
         try {
             connection = NametagEdit.getInstance().getHikari().getConnection();
@@ -44,6 +61,38 @@ public class UpdatePlayerTask extends BukkitRunnable {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+            }
+
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    syncMethod(uuid);
+                }
+            }.runTask(plugin);
+        }
+    }
+
+    private void syncMethod(UUID uuid) {
+        if (uuid == null && sender != null) {
+            Messages.UUID_LOOKUP_FAILED.send(sender, name);
+        } else {
+            PlayerData data = plugin.getNteHandler().getPlayerData().get(uuid);
+
+            if (data == null) {
+                plugin.getNteHandler().getPlayerData().put(uuid, new PlayerData(name, uuid, "", ""));
+            } else {
+                switch (id) {
+                    case 1:
+                        data.setPrefix(prefix);
+                        break;
+                    case 2:
+                        data.setSuffix(suffix);
+                        break;
+                }
+            }
+
+            if (sender != null) {
+                Messages.OPERATION_COMPLETED.send(sender);
             }
         }
     }

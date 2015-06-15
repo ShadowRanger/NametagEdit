@@ -139,8 +139,14 @@ public class NametagCommand implements CommandExecutor {
 
             setType(sender, targetName, type, NametagAPI.format(oper));
 
-            if (plugin.getNteHandler().isUsingDatabase() && target != null) {
-                new UpdatePlayerTask(target.getUniqueId(), target.getName(), NametagManager.getPrefix(target.getName()), NametagManager.getSuffix(target.getName())).runTaskAsynchronously(plugin);
+            int id = type.equalsIgnoreCase("prefix") ? 1 : 2;
+
+            if (plugin.getNteHandler().isUsingDatabase()) {
+                if (target != null) {
+                    new UpdatePlayerTask(target.getUniqueId(), target.getName(), NametagManager.getPrefix(target.getName()), NametagManager.getSuffix(target.getName()), sender, 1).runTaskAsynchronously(plugin);
+                } else {
+                    new UpdatePlayerTask(null, args[1], NametagManager.getPrefix(args[1]), NametagManager.getSuffix(args[1]), sender, 1).runTaskAsynchronously(plugin);
+                }
             }
         }
     }
@@ -239,7 +245,8 @@ public class NametagCommand implements CommandExecutor {
                             new UpdateGroupTask("groups", "prefix", group, NametagAPI.format(oper)).runTaskAsynchronously(plugin);
                         }
                     } else if (args[3].equalsIgnoreCase("suffix")) {
-                        String oper = format(args, 4, args.length).replace("\"", "");;
+                        String oper = format(args, 4, args.length).replace("\"", "");
+                        ;
 
                         groupData.setSuffix(NametagAPI.format(oper));
 
@@ -281,9 +288,15 @@ public class NametagCommand implements CommandExecutor {
 
         Player target = Bukkit.getPlayer(targetName);
 
-        if (target == null) {
-            new ModifyTagTask(id, targetName, args, sender).runTaskAsynchronously(plugin);
+        targetName = target == null ? targetName : target.getName();
+
+        if (reason == NametagChangeReason.SET_PREFIX) {
+            setNametagSoft(targetName, args, "", reason);
         } else {
+            setNametagSoft(targetName, "", args, reason);
+        }
+
+        if (target != null) {
             UUID uuid = target.getUniqueId();
 
             PlayerData data = plugin.getNteHandler().getPlayerData().get(uuid);
@@ -299,12 +312,6 @@ public class NametagCommand implements CommandExecutor {
                         data.setSuffix(args);
                         break;
                 }
-            }
-
-            if (reason == NametagChangeReason.SET_PREFIX) {
-                setNametagSoft(target.getName(), args, "", reason);
-            } else {
-                setNametagSoft(target.getName(), "", args, reason);
             }
         }
     }
