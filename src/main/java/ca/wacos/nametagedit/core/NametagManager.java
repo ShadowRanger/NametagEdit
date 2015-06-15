@@ -21,7 +21,6 @@ public class NametagManager {
     private static final String TEAM_NAME_PREFIX = "NTE";
 
     private static final List<Integer> LIST = new ArrayList<>();
-    private static final List<String> EMPTY_LIST = new ArrayList<>();
 
     private static final HashMap<TeamHandler, List<String>> TEAMS = new HashMap<>();
 
@@ -37,7 +36,7 @@ public class NametagManager {
     }
 
     private static void register(TeamHandler team) {
-        TEAMS.put(team, EMPTY_LIST);
+        TEAMS.put(team, new ArrayList<String>());
         sendPacketsAddTeam(team);
     }
 
@@ -316,7 +315,7 @@ public class NametagManager {
     public static void sendTeamsToPlayer(Player p) {
         try {
             for (TeamHandler team : getTeams()) {
-                PacketHandler mod = new PacketHandler(team.getName(), team.getPrefix(), team.getSuffix(), EMPTY_LIST, 0);
+                PacketHandler mod = new PacketHandler(team.getName(), team.getPrefix(), team.getSuffix(), new ArrayList<String>(), 0);
                 mod.sendToPlayer(p);
                 mod = new PacketHandler(team.getName(), getTeamPlayers(team), 3);
                 mod.sendToPlayer(p);
@@ -335,7 +334,7 @@ public class NametagManager {
         try {
             for (Player p : getOnline()) {
                 if (p != null) {
-                    PacketHandler mod = new PacketHandler(team.getName(), team.getPrefix(), team.getSuffix(), EMPTY_LIST, 0);
+                    PacketHandler mod = new PacketHandler(team.getName(), team.getPrefix(), team.getSuffix(), new ArrayList<String>(), 0);
                     mod.sendToPlayer(p);
                 }
             }
@@ -357,7 +356,7 @@ public class NametagManager {
         try {
             for (Player player : getOnline()) {
                 if (player != null) {
-                    PacketHandler mod = new PacketHandler(team.getName(), team.getPrefix(), team.getSuffix(), EMPTY_LIST, 1);
+                    PacketHandler mod = new PacketHandler(team.getName(), team.getPrefix(), team.getSuffix(), new ArrayList<String>(), 1);
                     mod.sendToPlayer(player);
                 }
             }
