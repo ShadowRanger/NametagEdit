@@ -14,6 +14,7 @@ public class ClearPlayerTask extends BukkitRunnable {
 
     private String player;
     private CommandSender sender;
+    private boolean usingDatabase;
 
     private final NametagEdit plugin = NametagEdit.getInstance();
 
@@ -28,6 +29,12 @@ public class ClearPlayerTask extends BukkitRunnable {
         }
 
         final UUID uuid = tempUUID;
+
+        if (usingDatabase) {
+            if (uuid != null) {
+                new DeleteTypeTask("players", "uuid", uuid.toString()).runTaskAsynchronously(plugin);
+            }
+        }
 
         new BukkitRunnable() {
             @Override

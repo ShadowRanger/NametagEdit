@@ -82,7 +82,7 @@ public class NametagCommand implements CommandExecutor {
             Player target = Bukkit.getPlayer(targetName);
 
             if (target == null) {
-                new ClearPlayerTask(targetName, sender).runTaskAsynchronously(plugin);
+                new ClearPlayerTask(targetName, sender, plugin.getNteHandler().isUsingDatabase()).runTaskAsynchronously(plugin);
             } else {
                 UUID uuid = target.getUniqueId();
 
