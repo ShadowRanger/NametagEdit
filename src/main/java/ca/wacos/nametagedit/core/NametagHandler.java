@@ -7,15 +7,18 @@ import ca.wacos.nametagedit.NametagEdit;
 import ca.wacos.nametagedit.constants.NametagChangeReason;
 import ca.wacos.nametagedit.data.GroupData;
 import ca.wacos.nametagedit.data.PlayerData;
+import ca.wacos.nametagedit.events.PlayerJoinUpdater;
 import ca.wacos.nametagedit.tasks.SQLDataTask;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -43,6 +46,25 @@ public class NametagHandler {
     public NametagHandler(FileConfiguration config) {
         this.usingDatabase = config.getBoolean("MySQL.Enabled");
         this.tabListDisabled = config.getBoolean("TabListDisabled");
+
+        if (config.getBoolean("MySQL.Updating.OnJoin")) {
+            Bukkit.getPluginManager().registerEvents(new PlayerJoinUpdater(), plugin);
+        } else {
+            int seconds = config.getInt("MySQL.Updating.OnTimer.Interval");
+
+            if (seconds == -1 || seconds < 0) {
+                seconds = 60;
+            }
+
+            final int ticks = seconds * 20;
+
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    reload(null, false);
+                }
+            }.runTaskTimer(plugin, 0, ticks);
+        }
     }
 
     private void setBlankTag(Player p) {

@@ -24,4 +24,8 @@ MySQL:
   Port: 3306
   Username: myUsername
   Password: myPassword
-  Database: myDatabase 
+  Database: myDatabase
+  Updating:
+    OnJoin: false # Update from the database on join?
+    OnTimer: true # Update from the database on a timer?
+      Interval: 60 # Seconds between updates
