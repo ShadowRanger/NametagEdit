@@ -49,7 +49,7 @@ public class NametagHandler {
 
         if (config.getBoolean("MySQL.Updating.OnJoin")) {
             Bukkit.getPluginManager().registerEvents(new PlayerJoinUpdater(), plugin);
-        } else {
+        } else if (config.getBoolean("MySQL.Updating.OnTimer")) {
             int seconds = config.getInt("MySQL.Updating.OnTimer.Interval");
 
             if (seconds == -1 || seconds < 0) {
