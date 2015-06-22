@@ -1,5 +1,5 @@
 #-----------------
-# NametagEdit v3.0.1
+# NametagEdit v3.0.2
 #-----------------
 # Development Builds: http://ci.playmc.cc/job/NametagEdit
 # Source Code: http://www.github.com/sgtcaze/NametagEdit
@@ -16,7 +16,7 @@ MetricsEnabled: true
 Chat:
   Enabled: false
   Format: "%prefix% %s %suffix%: %s"
-  
+
 # If enabled, NametagEdit will use database support
 MySQL:
   Enabled: false
@@ -25,7 +25,10 @@ MySQL:
   Username: myUsername
   Password: myPassword
   Database: myDatabase
-  Updating:
-    OnJoin: false # Update from the database on join?
-    OnTimer: true # Update from the database on a timer?
-      Interval: 60 # Seconds between updates
+
+# This is for MySQL. Update each time on join, or on a timer?
+# The "TimerInterval" will be in seconds
+Updating:
+  OnJoin: false
+  OnTimer: true
+  TimerInterval: 60

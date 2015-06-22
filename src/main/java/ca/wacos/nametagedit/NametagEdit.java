@@ -61,7 +61,6 @@ public class NametagEdit extends JavaPlugin {
         }
 
         if (config.getBoolean("MetricsEnabled")) {
-
             try {
                 Metrics metrics = new Metrics(this);
                 metrics.start();

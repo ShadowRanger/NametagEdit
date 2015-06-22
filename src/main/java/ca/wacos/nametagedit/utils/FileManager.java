@@ -77,7 +77,7 @@ public class FileManager {
     }
 
     // Quick replacement for "FileUtils"
-    private void generateFile(String name) {
+    public void generateFile(String name) {
         InputStream inputStream = null;
         OutputStream outputStream = null;
 

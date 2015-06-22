@@ -50,7 +50,7 @@ public class NametagHandler {
         if (config.getBoolean("MySQL.Updating.OnJoin")) {
             Bukkit.getPluginManager().registerEvents(new PlayerJoinUpdater(), plugin);
         } else if (config.getBoolean("MySQL.Updating.OnTimer")) {
-            int seconds = config.getInt("MySQL.Updating.OnTimer.Interval");
+            int seconds = config.getInt("MySQL.Updating.TimerInterval");
 
             if (seconds == -1 || seconds < 0) {
                 seconds = 60;
@@ -96,7 +96,9 @@ public class NametagHandler {
             applyTags();
         }
 
-        Messages.RELOADED_DATA.send(sender);
+        if (sender != null) {
+            Messages.RELOADED_DATA.send(sender);
+        }
     }
 
     // Saves all player and group data
