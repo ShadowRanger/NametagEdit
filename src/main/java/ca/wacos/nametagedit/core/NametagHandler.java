@@ -101,6 +101,10 @@ public class NametagHandler {
         }
     }
 
+    private String reformat(String input) {
+        return input.replace("§", "&");
+    }
+
     // Saves all player and group data
     public void saveFileData() {
         YamlConfiguration playersFile = plugin.getFileUtils().getPlayers();
@@ -110,15 +114,15 @@ public class NametagHandler {
             UUID uuid = data.getUuid();
             String name = data.getName();
             playersFile.set("Players." + uuid + ".Name", name);
-            playersFile.set("Players." + uuid + ".Prefix", data.getPrefix());
-            playersFile.set("Players." + uuid + ".Suffix", data.getSuffix());
+            playersFile.set("Players." + uuid + ".Prefix", reformat(data.getPrefix()));
+            playersFile.set("Players." + uuid + ".Suffix", reformat(data.getSuffix()));
         }
 
         for (GroupData data : groupData) {
             String name = data.getGroupName();
             groupsFile.set("Groups." + name + ".Permission", data.getPermission());
-            groupsFile.set("Groups." + name + ".Prefix", data.getPrefix());
-            groupsFile.set("Groups." + name + ".Suffix", data.getSuffix());
+            groupsFile.set("Groups." + name + ".Prefix", reformat(data.getPrefix()));
+            groupsFile.set("Groups." + name + ".Suffix", reformat(data.getSuffix()));
         }
 
         plugin.getFileUtils().saveAllFiles();
